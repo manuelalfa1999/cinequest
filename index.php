@@ -1,3 +1,8 @@
 <?php
-require_once 'config/db.php';
-echo '✅ Conexión exitosa a la base de datos!';
+if (session_status() === PHP_SESSION_NONE) session_start();
+if (isset($_SESSION['usuario_id'])) {
+    header('Location: pages/home.php');
+} else {
+    header('Location: pages/login.php');
+}
+exit;
