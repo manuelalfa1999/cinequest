@@ -401,3 +401,210 @@ footer {
 .btn-vista.quitar:hover {
     background: #e9456022;
 }
+.perfil-container {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 40px 20px 80px;
+}
+
+.perfil-header {
+    display: flex;
+    align-items: center;
+    gap: 30px;
+    background: #1a1a2e;
+    padding: 30px;
+    border-radius: 15px;
+    margin-bottom: 30px;
+    flex-wrap: wrap;
+}
+
+.perfil-avatar {
+    font-size: 60px;
+}
+
+.perfil-datos {
+    flex: 1;
+}
+
+.perfil-datos h1 {
+    font-size: 24px;
+    margin-bottom: 5px;
+}
+
+.perfil-email {
+    color: #888;
+    margin-bottom: 5px;
+}
+
+.perfil-fecha {
+    color: #666;
+    font-size: 13px;
+}
+
+.perfil-xp {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background: #e9456022;
+    border: 2px solid #e94560;
+    border-radius: 10px;
+    padding: 20px 30px;
+}
+
+.xp-numero {
+    font-size: 36px;
+    font-weight: bold;
+    color: #e94560;
+}
+
+.xp-label {
+    color: #888;
+    font-size: 13px;
+}
+
+.perfil-stats {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 15px;
+    margin-bottom: 40px;
+}
+
+.stat-card {
+    background: #1a1a2e;
+    border-radius: 10px;
+    padding: 20px;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.stat-numero {
+    font-size: 32px;
+    font-weight: bold;
+    color: #e94560;
+}
+
+.stat-label {
+    color: #888;
+    font-size: 13px;
+}
+
+.perfil-seccion {
+    margin-bottom: 40px;
+}
+
+.perfil-seccion h2 {
+    color: #e94560;
+    margin-bottom: 20px;
+    font-size: 20px;
+}
+
+.retos-lista {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.reto-card {
+    background: #1a1a2e;
+    border-radius: 10px;
+    padding: 20px;
+    border: 1px solid #333;
+}
+
+.reto-card.completado {
+    border-color: #e94560;
+    background: #e9456011;
+}
+
+.reto-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 8px;
+}
+
+.reto-header h3 {
+    font-size: 16px;
+}
+
+.reto-xp {
+    color: #e94560;
+    font-size: 13px;
+    font-weight: bold;
+}
+
+.reto-desc {
+    color: #888;
+    font-size: 13px;
+    margin-bottom: 12px;
+}
+
+.progreso-container {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.progreso-barra {
+    flex: 1;
+    background: #333;
+    border-radius: 10px;
+    height: 8px;
+    overflow: hidden;
+}
+
+.progreso-fill {
+    height: 100%;
+    background: #e94560;
+    border-radius: 10px;
+    transition: width 0.3s;
+}
+
+.progreso-texto {
+    color: #888;
+    font-size: 13px;
+    white-space: nowrap;
+}
+
+.historial-lista {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.historial-item {
+    display: flex;
+    gap: 15px;
+    background: #1a1a2e;
+    border-radius: 10px;
+    padding: 15px;
+    text-decoration: none;
+    color: #fff;
+    transition: background 0.2s;
+    align-items: center;
+}
+
+.historial-item:hover {
+    background: #252540;
+}
+
+.historial-item img {
+    width: 50px;
+    border-radius: 5px;
+}
+
+.historial-info h4 {
+    margin-bottom: 5px;
+}
+
+.historial-info p {
+    color: #888;
+    font-size: 13px;
+}
+
+.vacio {
+    color: #888;
+    font-style: italic;
+}

@@ -99,9 +99,59 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['marcar_vista'])) {
     }
 }
 
-if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['quitar_vista'])) {
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['quitar_vista']) && $_POST['quitar_vista'] == '1') {
+    // Borrar del historial
     $stmt = $pdo->prepare('DELETE FROM historial_visto WHERE usuario_id = ? AND pelicula_id = ?');
     $stmt->execute([$usuario_id, $tmdb_id]);
+
+    // Recalcular retos de películas vistas
+    $stmt = $pdo->prepare('SELECT COUNT(*) as total FROM historial_visto WHERE usuario_id = ?');
+    $stmt->execute([$usuario_id]);
+    $total_vistas = $stmt->fetch()['total'];
+
+    $stmt = $pdo->prepare('SELECT r.id, r.objetivo FROM retos r 
+                           INNER JOIN usuario_retos ur ON ur.reto_id = r.id AND ur.usuario_id = ?
+                           WHERE r.tipo = "peliculas_vistas"');
+    $stmt->execute([$usuario_id]);
+    $retos = $stmt->fetchAll();
+    foreach ($retos as $reto) {
+        $completado = $total_vistas >= $reto['objetivo'] ? 1 : 0;
+        $stmt2 = $pdo->prepare('UPDATE usuario_retos SET progreso = ?, completado = ?, fecha_completado = ?
+                               WHERE usuario_id = ? AND reto_id = ?');
+        $stmt2->execute([$total_vistas, $completado, null, $usuario_id, $reto['id']]);
+    }
+
+    // Revertir reto de duración si la película era larga
+    if (($pelicula['runtime'] ?? 0) >= 120) {
+        $stmt = $pdo->prepare('SELECT pelicula_id FROM historial_visto WHERE usuario_id = ?');
+        $stmt->execute([$usuario_id]);
+        $otras = $stmt->fetchAll();
+
+        $tiene_otra_larga = false;
+        foreach ($otras as $otra) {
+            $datos = obtener_pelicula($otra['pelicula_id']);
+            if (($datos['runtime'] ?? 0) >= 120) {
+                $tiene_otra_larga = true;
+                break;
+            }
+        }
+
+        if (!$tiene_otra_larga) {
+            $stmt = $pdo->prepare('SELECT id, puntos_xp FROM retos WHERE tipo = "duracion"');
+            $stmt->execute();
+            $reto_dur = $stmt->fetch();
+
+            if ($reto_dur) {
+                $stmt2 = $pdo->prepare('UPDATE usuario_retos SET progreso = 0, completado = 0, fecha_completado = NULL
+                                       WHERE usuario_id = ? AND reto_id = ?');
+                $stmt2->execute([$usuario_id, $reto_dur['id']]);
+
+                $stmt2 = $pdo->prepare('UPDATE usuarios SET puntos_xp = GREATEST(0, puntos_xp - ?) WHERE id = ?');
+                $stmt2->execute([$reto_dur['puntos_xp'], $usuario_id]);
+            }
+        }
+    }
+
     $ya_vista = false;
     $mensaje = '↩️ Película eliminada de tu historial.';
 }
@@ -150,12 +200,13 @@ include '../includes/header.php';
             <?php endif; ?>
 
             <form method="POST">
+                <input type="hidden" name="tmdb_id_form" value="<?= $tmdb_id ?>">
                 <?php if (!$ya_vista): ?>
                     <button type="submit" name="marcar_vista" class="btn-vista">
                         🎬 Marcar como vista
                     </button>
                 <?php else: ?>
-                    <button type="submit" name="quitar_vista" class="btn-vista quitar">
+                    <button type="submit" name="quitar_vista" value="1" class="btn-vista quitar">
                         ❌ Quitar de vistas
                     </button>
                 <?php endif; ?>
