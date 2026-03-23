@@ -53,7 +53,7 @@ $generos = [
     <div class="grid-peliculas">
         <?php foreach ($peliculas as $pelicula): ?>
             <?php if (empty($pelicula['poster_path'])) continue; ?>
-            <div class="tarjeta-pelicula">
+            <a href="pelicula.php?id=<?= $pelicula['id'] ?>" class="tarjeta-pelicula">
                 <img src="<?= TMDB_IMG_URL . $pelicula['poster_path'] ?>" 
                      alt="<?= htmlspecialchars($pelicula['title']) ?>">
                 <div class="tarjeta-info">
@@ -61,7 +61,7 @@ $generos = [
                     <p class="fecha"><?= substr($pelicula['release_date'] ?? '', 0, 4) ?></p>
                     <p class="puntuacion">⭐ <?= number_format($pelicula['vote_average'], 1) ?></p>
                 </div>
-            </div>
+            </a>
         <?php endforeach; ?>
     </div>
 

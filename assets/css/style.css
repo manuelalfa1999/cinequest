@@ -93,7 +93,7 @@ footer {
     padding: 20px;
     background: #1a1a2e;
     color: #666;
-    position: fixed;
+    position: relative;
     bottom: 0;
     width: 100%;
 }
@@ -285,4 +285,119 @@ footer {
 .resultados h2 {
     color: #e94560;
     margin-bottom: 20px;
+} 
+.detalle-container {
+    max-width: 1000px;
+    margin: 0 auto;
+    padding: 40px 20px 80px;
+}
+
+.detalle-hero {
+    display: flex;
+    gap: 40px;
+    flex-wrap: wrap;
+}
+
+.detalle-poster {
+    width: 280px;
+    border-radius: 10px;
+    flex-shrink: 0;
+}
+
+.detalle-info {
+    flex: 1;
+    min-width: 280px;
+}
+
+.detalle-info h1 {
+    font-size: 28px;
+    color: #fff;
+    margin-bottom: 10px;
+}
+
+.tagline {
+    color: #888;
+    font-style: italic;
+    margin-bottom: 20px;
+}
+
+.detalle-meta {
+    display: flex;
+    gap: 20px;
+    flex-wrap: wrap;
+    margin-bottom: 20px;
+    color: #aaa;
+    font-size: 14px;
+}
+
+.generos {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    margin-bottom: 20px;
+}
+
+.tag-genero {
+    background: #e9456022;
+    border: 1px solid #e94560;
+    color: #e94560;
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-size: 13px;
+}
+
+.sinopsis {
+    color: #ccc;
+    line-height: 1.7;
+    margin-bottom: 30px;
+}
+
+.btn-vista {
+    padding: 14px 30px;
+    background: #e94560;
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    font-size: 16px;
+    cursor: pointer;
+    margin-bottom: 15px;
+    display: block;
+    transition: background 0.2s;
+}
+
+.btn-vista:hover {
+    background: #c73652;
+}
+
+.btn-vista.visto {
+    background: #333;
+    cursor: not-allowed;
+}
+
+.btn-volver {
+    color: #888;
+    text-decoration: none;
+    font-size: 14px;
+}
+
+.btn-volver:hover {
+    color: #fff;
+}
+
+.mensaje-vista {
+    background: #00ff0033;
+    border: 1px solid #00ff00;
+    padding: 10px;
+    border-radius: 5px;
+    margin-bottom: 15px;
+    color: #6bff6b;
+}
+.btn-vista.quitar {
+    background: #333;
+    border: 1px solid #e94560;
+    color: #e94560;
+}
+
+.btn-vista.quitar:hover {
+    background: #e9456022;
 }
