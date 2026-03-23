@@ -93,7 +93,7 @@ footer {
     padding: 20px;
     background: #1a1a2e;
     color: #666;
-    position: relative;
+    position: fixed;
     bottom: 0;
     width: 100%;
 }
@@ -608,3 +608,140 @@ footer {
     color: #888;
     font-style: italic;
 }
+.admin-container {
+    max-width: 1000px;
+    margin: 0 auto;
+    padding: 40px 20px 80px;
+}
+
+.admin-container h1 {
+    color: #e94560;
+    margin-bottom: 30px;
+}
+
+.admin-stats {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 15px;
+    margin-bottom: 40px;
+}
+
+.admin-seccion {
+    background: #1a1a2e;
+    border-radius: 10px;
+    padding: 30px;
+    margin-bottom: 30px;
+}
+
+.admin-seccion h2 {
+    color: #e94560;
+    margin-bottom: 15px;
+}
+
+.admin-hint {
+    color: #888;
+    font-size: 13px;
+    margin-bottom: 20px;
+}
+
+.admin-hint a {
+    color: #e94560;
+}
+
+.admin-form {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+.admin-form input {
+    flex: 1;
+    padding: 10px;
+    background: #0f0f0f;
+    border: 1px solid #333;
+    border-radius: 5px;
+    color: #fff;
+    font-size: 14px;
+    min-width: 250px;
+}
+
+.admin-form button {
+    padding: 10px 20px;
+    background: #e94560;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.admin-form button:hover {
+    background: #c73652;
+}
+
+.admin-tabla {
+    overflow-x: auto;
+}
+
+.admin-tabla table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.admin-tabla th {
+    background: #0f0f0f;
+    padding: 12px;
+    text-align: left;
+    color: #888;
+    font-size: 13px;
+}
+
+.admin-tabla td {
+    padding: 12px;
+    border-bottom: 1px solid #333;
+    vertical-align: middle;
+}
+
+.admin-poster {
+    width: 40px;
+    border-radius: 3px;
+}
+
+.btn-ver {
+    padding: 6px 12px;
+    background: #1a1a2e;
+    border: 1px solid #e94560;
+    color: #e94560;
+    border-radius: 5px;
+    text-decoration: none;
+    font-size: 13px;
+    margin-right: 5px;
+}
+
+.btn-eliminar {
+    padding: 6px 12px;
+    background: #ff000022;
+    border: 1px solid #ff0000;
+    color: #ff6b6b;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 13px;
+}
+
+.btn-eliminar:hover {
+    background: #ff000044;
+}
+.btn-importar {
+    display: inline-block;
+    padding: 12px 25px;
+    background: #1a1a2e;
+    border: 1px solid #e94560;
+    color: #e94560;
+    border-radius: 8px;
+    text-decoration: none;
+    margin-bottom: 30px;
+}
+
+.btn-importar:hover {
+    background: #e9456022;
+}
+
