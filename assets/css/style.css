@@ -203,3 +203,86 @@ footer {
 .paginacion span {
     color: #888;
 }
+.recomendador-container {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 40px 20px;
+}
+
+.recomendador-container h1 {
+    color: #e94560;
+    margin-bottom: 10px;
+}
+
+.subtitulo {
+    color: #888;
+    margin-bottom: 40px;
+}
+
+.form-recomendador .campo {
+    margin-bottom: 30px;
+}
+
+.form-recomendador .campo label {
+    display: block;
+    font-size: 18px;
+    margin-bottom: 15px;
+    color: #fff;
+}
+
+.opciones-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.opcion {
+    background: #1a1a2e;
+    border: 2px solid #333;
+    border-radius: 10px;
+    padding: 12px 20px;
+    cursor: pointer;
+    transition: all 0.2s;
+    font-size: 14px;
+}
+
+.opcion:hover {
+    border-color: #e94560;
+    color: #e94560;
+}
+
+.opcion.seleccionada {
+    border-color: #e94560;
+    background: #e9456022;
+    color: #e94560;
+}
+
+.opcion input[type="radio"] {
+    display: none;
+}
+
+.btn-recomendar {
+    width: 100%;
+    padding: 15px;
+    background: #e94560;
+    color: #fff;
+    border: none;
+    border-radius: 10px;
+    font-size: 18px;
+    cursor: pointer;
+    margin-top: 10px;
+    transition: background 0.2s;
+}
+
+.btn-recomendar:hover {
+    background: #c73652;
+}
+
+.resultados {
+    margin-top: 50px;
+}
+
+.resultados h2 {
+    color: #e94560;
+    margin-bottom: 20px;
+}

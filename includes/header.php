@@ -12,6 +12,8 @@ if (session_status() === PHP_SESSION_NONE) {
     <link rel="stylesheet" href="/cinequest/assets/css/style.css">
 </head>
 <body>
+
+<script src="/cinequest/assets/js/recomendador.js" defer></script>
 <nav>
     <a href="/cinequest/index.php"><strong>🎬 CineQuest</strong></a>
     <?php if (isset($_SESSION['usuario_id'])): ?>
