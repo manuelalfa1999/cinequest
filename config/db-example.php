@@ -1,8 +1,13 @@
 <?php
+// ⚠️ INSTRUCCIONES PARA COMPAÑEROS:
+// 1. Copia este archivo y renómbralo como db.php
+// 2. Rellena tus datos de conexión de XAMPP
+// 3. Nunca subas db.php a GitHub
+
 $host     = 'localhost';
 $dbname   = 'cinequest';
 $username = 'root';
-$password = ''; // En XAMPP por defecto está vacío
+$password = ''; // En XAMPP suele estar vacío
 
 try {
     $pdo = new PDO(
