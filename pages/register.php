@@ -18,7 +18,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     } elseif (strlen($password) < 6) {
         $error = 'La contraseña debe tener al menos 6 caracteres.';
     } else {
-        // Comprobar si el email ya existe
         $stmt = $pdo->prepare('SELECT id FROM usuarios WHERE email = ?');
         $stmt->execute([$email]);
         if ($stmt->fetch()) {
@@ -34,24 +33,26 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 ?>
 <?php include '../includes/header.php'; ?>
 
-<main class="auth-container">
-    <h1>Crear cuenta</h1>
+<main class="auth-page">
+    <div class="auth-container">
+        <h1>Crear cuenta</h1>
 
-    <?php if ($error): ?>
-        <p class="error"><?= htmlspecialchars($error) ?></p>
-    <?php endif; ?>
-    <?php if ($exito): ?>
-        <p class="exito"><?= htmlspecialchars($exito) ?></p>
-    <?php endif; ?>
+        <?php if ($error): ?>
+            <p class="error"><?= htmlspecialchars($error) ?></p>
+        <?php endif; ?>
+        <?php if ($exito): ?>
+            <p class="exito"><?= htmlspecialchars($exito) ?></p>
+        <?php endif; ?>
 
-    <form method="POST">
-        <input type="text" name="nombre" placeholder="Nombre" required>
-        <input type="email" name="email" placeholder="Email" required>
-        <input type="password" name="password" placeholder="Contraseña" required>
-        <input type="password" name="repetir" placeholder="Repetir contraseña" required>
-        <button type="submit">Registrarse</button>
-    </form>
-    <p>¿Ya tienes cuenta? <a href="login.php">Inicia sesión</a></p>
+        <form method="POST">
+            <input type="text" name="nombre" placeholder="Nombre" required>
+            <input type="email" name="email" placeholder="Email" required>
+            <input type="password" name="password" placeholder="Contraseña" required>
+            <input type="password" name="repetir" placeholder="Repetir contraseña" required>
+            <button type="submit">Registrarse</button>
+        </form>
+        <p>¿Ya tienes cuenta? <a href="login.php">Inicia sesión</a></p>
+    </div>
 </main>
 
 <?php include '../includes/footer.php'; ?>

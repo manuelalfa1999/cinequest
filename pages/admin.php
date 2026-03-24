@@ -75,7 +75,7 @@ include '../includes/header.php';
 
 <main class="admin-container">
     <h1>⚙️ Panel de Administración</h1>
-    <a href="importar.php" class="btn-importar">📥 Importar películas desde TMDB</a>
+    <a href="importacion.php" class="btn-importar">📥 Importar películas desde TMDB</a>
 
     <div class="admin-stats">
         <div class="stat-card">

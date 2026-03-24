@@ -25,19 +25,21 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 ?>
 <?php include '../includes/header.php'; ?>
 
-<main class="auth-container">
-    <h1>Iniciar sesión</h1>
+<main class="auth-page">
+    <div class="auth-container">
+        <h1>Iniciar sesión</h1>
 
-    <?php if ($error): ?>
-        <p class="error"><?= htmlspecialchars($error) ?></p>
-    <?php endif; ?>
+        <?php if ($error): ?>
+            <p class="error"><?= htmlspecialchars($error) ?></p>
+        <?php endif; ?>
 
-    <form method="POST">
-        <input type="email" name="email" placeholder="Email" required>
-        <input type="password" name="password" placeholder="Contraseña" required>
-        <button type="submit">Entrar</button>
-    </form>
-    <p>¿No tienes cuenta? <a href="register.php">Regístrate</a></p>
+        <form method="POST">
+            <input type="email" name="email" placeholder="Email" required>
+            <input type="password" name="password" placeholder="Contraseña" required>
+            <button type="submit">Entrar</button>
+        </form>
+        <p>¿No tienes cuenta? <a href="register.php">Regístrate</a></p>
+    </div>
 </main>
 
 <?php include '../includes/footer.php'; ?>
