@@ -1,0 +1,41 @@
+<svg width="100%" viewBox="0 0 680 160" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <style>
+      .lt { font-family: Arial, sans-serif; font-weight: 700; }
+    </style>
+  </defs>
+
+  <rect x="10" y="10" width="130" height="140" rx="18" fill="#1a1a2e"/>
+  <rect x="10" y="10" width="130" height="140" rx="18" fill="none" stroke="#e94560" stroke-width="3"/>
+
+  <rect x="10" y="10" width="18" height="140" rx="8" fill="#e94560"/>
+  <rect x="14" y="26" width="10" height="8" rx="2" fill="#1a1a2e"/>
+  <rect x="14" y="44" width="10" height="8" rx="2" fill="#1a1a2e"/>
+  <rect x="14" y="62" width="10" height="8" rx="2" fill="#1a1a2e"/>
+  <rect x="14" y="80" width="10" height="8" rx="2" fill="#1a1a2e"/>
+  <rect x="14" y="98" width="10" height="8" rx="2" fill="#1a1a2e"/>
+  <rect x="14" y="116" width="10" height="8" rx="2" fill="#1a1a2e"/>
+
+  <rect x="122" y="10" width="18" height="140" rx="8" fill="#e94560"/>
+  <rect x="126" y="26" width="10" height="8" rx="2" fill="#1a1a2e"/>
+  <rect x="126" y="44" width="10" height="8" rx="2" fill="#1a1a2e"/>
+  <rect x="126" y="62" width="10" height="8" rx="2" fill="#1a1a2e"/>
+  <rect x="126" y="80" width="10" height="8" rx="2" fill="#1a1a2e"/>
+  <rect x="126" y="98" width="10" height="8" rx="2" fill="#1a1a2e"/>
+  <rect x="126" y="116" width="10" height="8" rx="2" fill="#1a1a2e"/>
+
+  <path d="M52 28 Q52 68 75 74 Q98 68 98 28 Z" fill="#f5a623"/>
+  <path d="M52 38 Q38 38 38 54 Q38 66 52 66" fill="none" stroke="#f5a623" stroke-width="5" stroke-linecap="round"/>
+  <path d="M98 38 Q112 38 112 54 Q112 66 98 66" fill="none" stroke="#f5a623" stroke-width="5" stroke-linecap="round"/>
+  <rect x="67" y="74" width="16" height="10" rx="1" fill="#f5a623"/>
+  <rect x="58" y="84" width="34" height="7" rx="3" fill="#f5a623"/>
+
+  <polygon points="75,36 79,48 92,48 82,56 86,68 75,60 64,68 68,56 58,48 71,48" fill="#1a1a2e" opacity="0.4"/>
+  <polygon points="75,36 79,48 92,48 82,56 86,68 75,60 64,68 68,56 58,48 71,48" fill="#fff" opacity="0.45"/>
+
+  <text x="75" y="128" class="lt" font-size="28" fill="#e94560" text-anchor="middle" letter-spacing="4">CQ</text>
+
+  <text x="158" y="95" class="lt" font-size="54">
+    <tspan fill="#ffffff">Cine</tspan><tspan fill="#e94560">Quest</tspan>
+  </text>
+</svg>

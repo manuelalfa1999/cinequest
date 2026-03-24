@@ -26,6 +26,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <?php include '../includes/header.php'; ?>
 
 <main class="auth-page">
+    <div class="auth-wrapper">
+        <div class="auth-bienvenida">
+            <h2>🍿 Bienvenido a <span style="color:#e94560">CineQuest</span> 🍿</h2>
+            <p>Descubre películas, completa retos y sube de nivel</p>
+        </div>
     <div class="auth-container">
         <h1>Iniciar sesión</h1>
 
@@ -39,6 +44,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             <button type="submit">Entrar</button>
         </form>
         <p>¿No tienes cuenta? <a href="register.php">Regístrate</a></p>
+    </div>
     </div>
 </main>
 
