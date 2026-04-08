@@ -159,6 +159,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 </label>
             </div>
         </div>
+        <div id="aviso-filtros" style="display:none; background:#e9456022; border:1px solid #e94560; color:#e94560; padding:12px 20px; border-radius:8px; margin-bottom:15px;">
+    ⚠️ Para una buena recomendación selecciona las tres opciones — cómo te sientes, con quién y cuánto tiempo tienes.
+        </div>
 
         <button type="submit" class="btn-recomendar">🎯 Recomendar películas</button>
     </form>

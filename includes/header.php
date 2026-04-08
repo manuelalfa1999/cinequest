@@ -10,6 +10,7 @@ if (session_status() === PHP_SESSION_NONE) {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>CineQuest</title>
     <link rel="stylesheet" href="/cinequest/assets/css/style.css">
+    <script src="/cinequest/assets/js/recomendador.js" defer></script>
 </head>
 <body>
 <nav>
