@@ -54,7 +54,7 @@ $generos = [
         <?php foreach ($peliculas as $pelicula): ?>
             <?php if (empty($pelicula['poster_path'])) continue; ?>
             <a href="pelicula.php?id=<?= $pelicula['id'] ?>" class="tarjeta-pelicula">
-                <img src="<?= TMDB_IMG_URL . $pelicula['poster_path'] ?>" 
+                <img src="<?= poster_url($pelicula['poster_path']) ?>" 
                      alt="<?= htmlspecialchars($pelicula['title']) ?>">
                 <div class="tarjeta-info">
                     <h3><?= htmlspecialchars($pelicula['title']) ?></h3>

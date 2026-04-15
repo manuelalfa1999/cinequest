@@ -6,27 +6,24 @@ if (!isset($_SESSION['usuario_id'])) {
 }
 require_once '../api/tmdb.php';
 
-// Mapa de estado de ánimo → géneros TMDB
 $mapa_animo = [
-    'alegre'    => [35, 12, 16],        // Comedia, Aventura, Animación
-    'triste'    => [18, 10749],          // Drama, Romance
-    'relajado'  => [99, 18, 10751],     // Documental, Drama, Familia
-    'accion'    => [28, 53, 80],         // Acción, Thriller, Crimen
-    'intrigado' => [27, 9648, 53],       // Terror, Misterio, Thriller
-    'romantico' => [10749, 35, 18],      // Romance, Comedia, Drama
-    'aventurero'=> [12, 14, 878],        // Aventura, Fantasía, Sci-Fi
+    'alegre'    => [35, 12, 16],
+    'triste'    => [18, 10749],
+    'relajado'  => [99, 18, 10751],
+    'accion'    => [28, 53, 80],
+    'intrigado' => [27, 9648, 53],
+    'romantico' => [10749, 35, 18],
+    'aventurero'=> [12, 14, 878],
 ];
 
-// Mapa de compañía → géneros recomendados
 $mapa_compania = [
-    'solo'      => [27, 878, 53, 80],   // Terror, Sci-Fi, Thriller, Crimen
-    'pareja'    => [10749, 35, 18],      // Romance, Comedia, Drama
-    'amigos'    => [28, 35, 12, 80],    // Acción, Comedia, Aventura, Crimen
-    'familia'   => [10751, 16, 12, 35], // Familia, Animación, Aventura, Comedia
-    'primera'   => [10749, 35, 12],     // Romance, Comedia, Aventura
+    'solo'      => [27, 878, 53, 80],
+    'pareja'    => [10749, 35, 18],
+    'amigos'    => [28, 35, 12, 80],
+    'familia'   => [10751, 16, 12, 35],
+    'primera'   => [10749, 35, 12],
 ];
 
-// Mapa de tiempo → duración máxima en minutos
 $mapa_tiempo = [
     '30min'  => 35,
     '1h'     => 65,
@@ -44,11 +41,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $compania = $_POST['compania'] ?? '';
     $tiempo   = $_POST['tiempo'] ?? '';
 
-    // Combinar géneros de ánimo y compañía
     $generos_animo    = $mapa_animo[$animo] ?? [];
     $generos_compania = $mapa_compania[$compania] ?? [];
 
-    // Intersección primero, si vacía usar solo ánimo
     $generos_comunes = array_intersect($generos_animo, $generos_compania);
     $generos_finales = !empty($generos_comunes) ? $generos_comunes : $generos_animo;
 
@@ -58,7 +53,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $resultado = obtener_peliculas_por_genero($genero_id, $duracion_max !== 999 ? $duracion_max : null);
     $peliculas = $resultado['results'] ?? [];
 
-    // Guardar contexto en sesión para historial
     $_SESSION['ultimo_contexto'] = [
         'animo'    => $animo,
         'compania' => $compania,
@@ -159,7 +153,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 </label>
             </div>
         </div>
-        <div id="aviso-filtros" style="display:none; background:#e9456022; border:1px solid #e94560; color:#e94560; padding:12px 20px; border-radius:8px; margin-bottom:15px;">
+
+        <div id="aviso-filtros" style="display:none; background:#4fc3f722; border:1px solid #4fc3f7; color:#4fc3f7; padding:12px 20px; border-radius:8px; margin-bottom:15px;">
             ⚠️ Para una buena recomendación selecciona las tres opciones — cómo te sientes, con quién y cuánto tiempo tienes.
         </div>
 
@@ -176,7 +171,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     <?php foreach ($peliculas as $pelicula): ?>
                         <?php if (empty($pelicula['poster_path'])) continue; ?>
                         <a href="pelicula.php?id=<?= $pelicula['id'] ?>" class="tarjeta-pelicula">
-                            <img src="<?= TMDB_IMG_URL . $pelicula['poster_path'] ?>"
+                            <img src="<?= poster_url($pelicula['poster_path']) ?>"
                                  alt="<?= htmlspecialchars($pelicula['title']) ?>">
                             <div class="tarjeta-info">
                                 <h3><?= htmlspecialchars($pelicula['title']) ?></h3>

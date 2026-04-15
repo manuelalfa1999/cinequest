@@ -36,3 +36,11 @@ if (session_status() === PHP_SESSION_NONE) {
         </div>
     <?php endif; ?>
 </nav>
+
+<?php
+require_once __DIR__ . '/../api/tmdb.php';
+if (!tmdb_disponible()): ?>
+    <div style="background:#4fc3f722; border-bottom:1px solid #4fc3f7; color:#4fc3f7; padding:8px 20px; font-size:13px; text-align:center;">
+        ⚠️ Conexión con TMDB no disponible — mostrando catálogo local
+    </div>
+<?php endif; ?>
