@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>CineQuest — Modelo Entidad-Relación</title>
+  <style>
+    body { font-family: Arial, sans-serif; background: #fff; padding: 20px; }
+    h1 { font-size: 22px; margin-bottom: 20px; color: #333; }
+    #erd { width: 100%; }
+  </style>
+</head>
+<body>
+  <h1>CineQuest — Modelo Entidad-Relación</h1>
+  <div id="erd"></div>
+  <script type="module">
+    import mermaid from 'https://esm.sh/mermaid@11/dist/mermaid.esm.min.mjs';
+    await document.fonts.ready;
+    mermaid.initialize({
+      startOnLoad: false,
+      theme: 'base',
+      fontFamily: 'Arial, sans-serif',
+      themeVariables: {
+        darkMode: false,
+        fontSize: '13px',
+        fontFamily: 'Arial, sans-serif',
+        lineColor: '#73726c',
+        textColor: '#3d3d3a',
+      },
+    });
+    const { svg } = await mermaid.render('erd-svg', `erDiagram
+      usuarios {
+        int id PK
+        string nombre
+        string email
+        string password_hash
+        string avatar
+        int puntos_xp
+        string rol
+        datetime fecha_registro
+      }
+      peliculas {
+        int id PK
+        int tmdb_id
+        string titulo
+        string genero
+        int duracion
+        text sinopsis
+        string poster_url
+        date fecha_estreno
+      }
+      valoraciones {
+        int id PK
+        int usuario_id FK
+        int pelicula_id FK
+        tinyint puntuacion
+        text comentario
+        datetime fecha
+      }
+      historial_visto {
+        int id PK
+        int usuario_id FK
+        int pelicula_id FK
+        datetime fecha
+        string estado_animo
+        string compania
+      }
+      retos {
+        int id PK
+        string titulo
+        string descripcion
+        string tipo
+        int objetivo
+        int puntos_xp
+      }
+      usuario_retos {
+        int id PK
+        int usuario_id FK
+        int reto_id FK
+        int progreso
+        tinyint completado
+        datetime fecha_completado
+      }
+      logros {
+        int id PK
+        string titulo
+        string descripcion
+        string icono
+        string condicion
+      }
+      usuario_logros {
+        int id PK
+        int usuario_id FK
+        int logro_id FK
+        datetime fecha_obtenido
+      }
+      usuarios ||--o{ valoraciones : "hace"
+      usuarios ||--o{ historial_visto : "registra"
+      usuarios ||--o{ usuario_retos : "tiene"
+      usuarios ||--o{ usuario_logros : "obtiene"
+      peliculas ||--o{ valoraciones : "recibe"
+      peliculas ||--o{ historial_visto : "aparece en"
+      retos ||--o{ usuario_retos : "asignado a"
+      logros ||--o{ usuario_logros : "otorgado a"
+    `);
+    document.getElementById('erd').innerHTML = svg;
+  </script>
+</body>
+</html>

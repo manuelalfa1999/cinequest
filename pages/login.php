@@ -28,7 +28,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <main class="auth-page">
     <div class="auth-wrapper">
         <div class="auth-bienvenida">
-            <h2>🍿 Bienvenido a <span style="color:#e94560">CineQuest</span> 🍿</h2>
+            <h2>🍿 Bienvenido a <span style="color:#4fc3f7">CineQuest</span> 🍿</h2>
             <p>Descubre películas, completa retos y sube de nivel</p>
         </div>
     <div class="auth-container">

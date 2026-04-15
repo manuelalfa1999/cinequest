@@ -27,9 +27,9 @@ document.querySelector('.btn-recomendar').addEventListener('click', function(e) 
         e.preventDefault();
         aviso.style.display = 'block';
 
-        if (!animo) document.querySelector('.campo:nth-child(1) .opciones-grid').style.border = '2px solid #e94560';
-        if (!compania) document.querySelector('.campo:nth-child(2) .opciones-grid').style.border = '2px solid #e94560';
-        if (!tiempo) document.querySelector('.campo:nth-child(3) .opciones-grid').style.border = '2px solid #e94560';
+        if (!animo) document.querySelector('.campo:nth-child(1) .opciones-grid').style.border = '2px solid #4fc3f7';
+        if (!compania) document.querySelector('.campo:nth-child(2) .opciones-grid').style.border = '2px solid #4fc3f7';
+        if (!tiempo) document.querySelector('.campo:nth-child(3) .opciones-grid').style.border = '2px solid #4fc3f7';
     } else {
         aviso.style.display = 'none';
     }

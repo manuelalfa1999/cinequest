@@ -1,0 +1,73 @@
+<svg width="100%" viewBox="0 0 680 600" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <marker id="arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M2 1L8 5L2 9" fill="none" stroke="#666" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+    </marker>
+    <style>
+      text { font-family: Arial, sans-serif; fill: #333; }
+      .th { font-size: 14px; font-weight: 700; }
+      .ts { font-size: 12px; fill: #555; }
+      .node-gray rect { fill: #F1EFE8; stroke: #5F5E5A; }
+      .node-purple rect { fill: #EEEDFE; stroke: #534AB7; }
+      .node-teal rect { fill: #E1F5EE; stroke: #0F6E56; }
+      .node-blue rect { fill: #E6F1FB; stroke: #185FA5; }
+      .node-amber rect { fill: #FAEEDA; stroke: #854F0B; }
+      .arr { stroke: #666; stroke-width: 1.5; fill: none; }
+    </style>
+  </defs>
+
+  <g class="node-amber">
+    <rect x="220" y="20" width="240" height="44" rx="8" stroke-width="0.5"/>
+    <text class="th" x="340" y="42" text-anchor="middle" dominant-baseline="central">Marcar como vista</text>
+  </g>
+  <line x1="340" y1="64" x2="340" y2="100" class="arr" marker-end="url(#arrow)"/>
+  <g class="node-blue">
+    <rect x="210" y="100" width="260" height="56" rx="8" stroke-width="0.5"/>
+    <text class="th" x="340" y="121" text-anchor="middle" dominant-baseline="central">INSERT historial_visto</text>
+    <text class="ts" x="340" y="143" text-anchor="middle" dominant-baseline="central">usuario, pelicula, animo, compania</text>
+  </g>
+  <line x1="340" y1="156" x2="340" y2="192" class="arr" marker-end="url(#arrow)"/>
+  <g class="node-purple">
+    <rect x="210" y="192" width="260" height="56" rx="8" stroke-width="0.5"/>
+    <text class="th" x="340" y="213" text-anchor="middle" dominant-baseline="central">COUNT historial_visto</text>
+    <text class="ts" x="340" y="235" text-anchor="middle" dominant-baseline="central">Total peliculas vistas</text>
+  </g>
+  <line x1="340" y1="248" x2="340" y2="284" class="arr" marker-end="url(#arrow)"/>
+  <g class="node-purple">
+    <rect x="200" y="284" width="280" height="56" rx="8" stroke-width="0.5"/>
+    <text class="th" x="340" y="305" text-anchor="middle" dominant-baseline="central">Actualizar retos</text>
+    <text class="ts" x="340" y="327" text-anchor="middle" dominant-baseline="central">progreso = total_vistas</text>
+  </g>
+  <line x1="340" y1="340" x2="340" y2="376" class="arr" marker-end="url(#arrow)"/>
+  <g class="node-purple">
+    <rect x="210" y="376" width="260" height="56" rx="8" stroke-width="0.5"/>
+    <text class="th" x="340" y="397" text-anchor="middle" dominant-baseline="central">progreso >= objetivo?</text>
+    <text class="ts" x="340" y="419" text-anchor="middle" dominant-baseline="central">Comprueba condicion</text>
+  </g>
+  <line x1="210" y1="404" x2="110" y2="404" class="arr" marker-end="url(#arrow)"/>
+  <text class="ts" x="158" y="396" text-anchor="middle">No</text>
+  <line x1="470" y1="404" x2="560" y2="404" class="arr" marker-end="url(#arrow)"/>
+  <text class="ts" x="517" y="396" text-anchor="middle">Si</text>
+  <g class="node-gray">
+    <rect x="30" y="376" width="170" height="56" rx="8" stroke-width="0.5"/>
+    <text class="th" x="115" y="397" text-anchor="middle" dominant-baseline="central">Guarda progreso</text>
+    <text class="ts" x="115" y="419" text-anchor="middle" dominant-baseline="central">completado = 0</text>
+  </g>
+  <g class="node-teal">
+    <rect x="480" y="376" width="170" height="56" rx="8" stroke-width="0.5"/>
+    <text class="th" x="565" y="397" text-anchor="middle" dominant-baseline="central">Reto completado</text>
+    <text class="ts" x="565" y="419" text-anchor="middle" dominant-baseline="central">completado = 1</text>
+  </g>
+  <line x1="565" y1="432" x2="565" y2="468" class="arr" marker-end="url(#arrow)"/>
+  <g class="node-amber">
+    <rect x="460" y="468" width="200" height="56" rx="8" stroke-width="0.5"/>
+    <text class="th" x="560" y="489" text-anchor="middle" dominant-baseline="central">Suma XP</text>
+    <text class="ts" x="560" y="511" text-anchor="middle" dominant-baseline="central">puntos_xp + reto.xp</text>
+  </g>
+  <path d="M560 524 L560 556 L340 556" fill="none" class="arr" marker-end="url(#arrow)"/>
+  <path d="M115 432 L115 556 L260 556" fill="none" class="arr" marker-end="url(#arrow)"/>
+  <g class="node-gray">
+    <rect x="220" y="540" width="240" height="44" rx="22" stroke-width="0.5"/>
+    <text class="th" x="340" y="562" text-anchor="middle" dominant-baseline="central">Perfil actualizado</text>
+  </g>
+</svg>
