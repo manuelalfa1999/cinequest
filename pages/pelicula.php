@@ -228,8 +228,9 @@ include '../includes/header.php';
                     <span>⏱️ <?= $horas ?>h <?= $minutos ?>min</span>
                 <?php endif; ?>
                 <span>⭐ <?= number_format($pelicula['vote_average'], 1) ?>/10</span>
+                <span>🗳️ <?= number_format($pelicula['vote_count']) ?> votos</span>
                 <?php if (!empty($valoraciones)): ?>
-                    <span>🌟 <?= number_format($media_valoracion, 0) ?>/5 (<?= count($valoraciones) ?> reseñas)</span>
+                    <span>🌟 <?= number_format($media_valoracion, 1) ?>/5 (<?= count($valoraciones) ?> reseñas)</span>
                 <?php endif; ?>
             </div>
 
@@ -260,9 +261,15 @@ include '../includes/header.php';
                 <p class="mensaje-vista"><?= $mensaje ?></p>
             <?php endif; ?>
 
+            <?php
+            $fecha_estreno = $pelicula['release_date'] ?? '';
+            $ya_estrenada = !empty($fecha_estreno) && $fecha_estreno <= date('Y-m-d');
+            ?>
             <form method="POST">
                 <input type="hidden" name="tmdb_id_form" value="<?= $tmdb_id ?>">
-                <?php if (!$ya_vista): ?>
+                <?php if (!$ya_estrenada): ?>
+                    <p class="no-estrenada">🗓️ Esta película aún no se ha estrenado — disponible el <?= date('d/m/Y', strtotime($fecha_estreno)) ?></p>
+                <?php elseif (!$ya_vista): ?>
                     <button type="submit" name="marcar_vista" class="btn-vista">
                         🎬 Marcar como vista
                     </button>

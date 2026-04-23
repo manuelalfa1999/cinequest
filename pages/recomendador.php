@@ -32,6 +32,31 @@ $mapa_tiempo = [
     'mas2h'  => 999,
 ];
 
+$mapa_decada = [
+    '80s'     => ['1980-01-01', '1989-12-31'],
+    '90s'     => ['1990-01-01', '1999-12-31'],
+    '2000s'   => ['2000-01-01', '2009-12-31'],
+    '2010s'   => ['2010-01-01', '2019-12-31'],
+    'reciente'=> ['2020-01-01', date('Y-m-d')],
+];
+
+$mapa_idioma = [
+    'es' => 'Español',
+    'en' => 'Inglés',
+    'fr' => 'Francés',
+    'ja' => 'Japonés',
+    'it' => 'Italiano',
+    'de' => 'Alemán',
+    'ko' => 'Coreano',
+];
+
+$generos_lista = [
+    28 => 'Acción', 12 => 'Aventura', 16 => 'Animación',
+    35 => 'Comedia', 80 => 'Crimen', 99 => 'Documental',
+    18 => 'Drama', 14 => 'Fantasía', 27 => 'Terror',
+    10749 => 'Romance', 878 => 'Ciencia ficción', 53 => 'Thriller',
+];
+
 $peliculas = [];
 $buscado = false;
 
@@ -40,6 +65,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $animo    = $_POST['animo'] ?? '';
     $compania = $_POST['compania'] ?? '';
     $tiempo   = $_POST['tiempo'] ?? '';
+    $genero_extra = (int)($_POST['genero_extra'] ?? 0);
+    $decada   = $_POST['decada'] ?? '';
+    $idioma   = $_POST['idioma'] ?? '';
+    $puntuacion_min = (float)($_POST['puntuacion_min'] ?? 0);
 
     $generos_animo    = $mapa_animo[$animo] ?? [];
     $generos_compania = $mapa_compania[$compania] ?? [];
@@ -47,10 +76,37 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $generos_comunes = array_intersect($generos_animo, $generos_compania);
     $generos_finales = !empty($generos_comunes) ? $generos_comunes : $generos_animo;
 
-    $duracion_max = $mapa_tiempo[$tiempo] ?? null;
-    $genero_id = $generos_finales[array_key_first($generos_finales)] ?? 28;
+    // Si el usuario eligió género extra, usarlo directamente
+    if ($genero_extra) {
+        $genero_id = $genero_extra;
+    } else {
+        $genero_id = $generos_finales[array_key_first($generos_finales)] ?? 28;
+    }
 
-    $resultado = obtener_peliculas_por_genero($genero_id, $duracion_max !== 999 ? $duracion_max : null);
+    $duracion_max = $mapa_tiempo[$tiempo] ?? null;
+
+    $params = ['with_genres' => $genero_id, 'sort_by' => 'popularity.desc'];
+
+    if ($duracion_max && $duracion_max !== 999) {
+        $params['with_runtime.lte'] = $duracion_max;
+    }
+
+    if ($decada && isset($mapa_decada[$decada])) {
+        $params['primary_release_date.gte'] = $mapa_decada[$decada][0];
+        $params['primary_release_date.lte'] = $mapa_decada[$decada][1];
+    }
+
+    if ($idioma) {
+        $params['with_original_language'] = $idioma;
+    }
+
+    if ($puntuacion_min > 0) {
+        $params['vote_average.gte'] = $puntuacion_min;
+        $params['vote_count.gte'] = 50;
+    }
+
+    $resultado = tmdb_get('/discover/movie', $params);
+    if (!$resultado) $resultado = obtener_peliculas_por_genero($genero_id, $duracion_max !== 999 ? $duracion_max : null);
     $peliculas = $resultado['results'] ?? [];
 
     $_SESSION['ultimo_contexto'] = [
@@ -151,6 +207,58 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     <input type="radio" name="tiempo" value="mas2h">
                     🎬 Más de 2 horas
                 </label>
+            </div>
+        </div>
+
+        <div class="filtros-extra">
+            <h3>🔧 Filtros adicionales (opcionales)</h3>
+
+            <div class="filtros-extra-grid">
+                <div class="filtro-extra-campo">
+                    <label>🎭 Género específico</label>
+                    <select name="genero_extra">
+                        <option value="">Cualquier género</option>
+                        <?php foreach ($generos_lista as $id => $nombre): ?>
+                            <option value="<?= $id ?>" <?= ($_POST['genero_extra'] ?? '') == $id ? 'selected' : '' ?>>
+                                <?= $nombre ?>
+                            </option>
+                        <?php endforeach; ?>
+                    </select>
+                </div>
+
+                <div class="filtro-extra-campo">
+                    <label>📅 Década</label>
+                    <select name="decada">
+                        <option value="">Cualquier época</option>
+                        <option value="80s" <?= ($_POST['decada'] ?? '') === '80s' ? 'selected' : '' ?>>🕹️ Años 80</option>
+                        <option value="90s" <?= ($_POST['decada'] ?? '') === '90s' ? 'selected' : '' ?>>📼 Años 90</option>
+                        <option value="2000s" <?= ($_POST['decada'] ?? '') === '2000s' ? 'selected' : '' ?>>💿 Años 2000</option>
+                        <option value="2010s" <?= ($_POST['decada'] ?? '') === '2010s' ? 'selected' : '' ?>>📱 Años 2010</option>
+                        <option value="reciente" <?= ($_POST['decada'] ?? '') === 'reciente' ? 'selected' : '' ?>>🆕 Reciente (2020+)</option>
+                    </select>
+                </div>
+
+                <div class="filtro-extra-campo">
+                    <label>🌍 Idioma original</label>
+                    <select name="idioma">
+                        <option value="">Cualquier idioma</option>
+                        <?php foreach ($mapa_idioma as $codigo => $nombre): ?>
+                            <option value="<?= $codigo ?>" <?= ($_POST['idioma'] ?? '') === $codigo ? 'selected' : '' ?>>
+                                <?= $nombre ?>
+                            </option>
+                        <?php endforeach; ?>
+                    </select>
+                </div>
+
+                <div class="filtro-extra-campo">
+                    <label>⭐ Puntuación mínima</label>
+                    <select name="puntuacion_min">
+                        <option value="0">Cualquier puntuación</option>
+                        <option value="6" <?= ($_POST['puntuacion_min'] ?? '') == '6' ? 'selected' : '' ?>>6+ — Buena</option>
+                        <option value="7" <?= ($_POST['puntuacion_min'] ?? '') == '7' ? 'selected' : '' ?>>7+ — Muy buena</option>
+                        <option value="8" <?= ($_POST['puntuacion_min'] ?? '') == '8' ? 'selected' : '' ?>>8+ — Excelente</option>
+                    </select>
+                </div>
             </div>
         </div>
 
