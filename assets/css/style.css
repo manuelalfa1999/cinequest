@@ -1,3 +1,6 @@
+
+Copiar
+
 /* ===========================
    RESET Y BASE
 =========================== */
@@ -41,7 +44,7 @@ nav {
     flex-shrink: 0;
     gap: 20px;
 }
-
+ 
 .nav-links {
     margin-left: auto;
     display: flex;
@@ -129,37 +132,26 @@ footer {
     width: 100%;
     padding: 12px;
     background: #4fc3f7;
-    color: #fff;
+    color: #0f0f0f;
     border: none;
     border-radius: 5px;
     cursor: pointer;
     font-size: 16px;
+    font-weight: bold;
 }
  
-.auth-container button:hover {
-    background: #0295b5;
-}
-
+.auth-container button:hover { background: #0295b5; color: #fff; }
+ 
 .auth-wrapper {
     display: flex;
     flex-direction: column;
     align-items: center;
     gap: 20px;
 }
-
-.auth-bienvenida {
-    text-align: center;
-}
-
-.auth-bienvenida h2 {
-    font-size: 28px;
-    margin-bottom: 8px;
-}
-
-.auth-bienvenida p {
-    color: #888;
-    font-size: 15px;
-}
+ 
+.auth-bienvenida { text-align: center; }
+.auth-bienvenida h2 { font-size: 28px; margin-bottom: 8px; }
+.auth-bienvenida p { color: #888; font-size: 15px; }
  
 /* ===========================
    HOME ESTILO NETFLIX
@@ -189,14 +181,8 @@ footer {
     padding: 50px 40px;
 }
  
-.hero-content {
-    max-width: 500px;
-}
- 
-.hero-content h1 {
-    font-size: 36px;
-    margin-bottom: 15px;
-}
+.hero-content { max-width: 500px; }
+.hero-content h1 { font-size: 36px; margin-bottom: 15px; }
  
 .hero-sinopsis {
     color: #ccc;
@@ -205,23 +191,19 @@ footer {
     font-size: 15px;
 }
  
-.hero-botones {
-    display: flex;
-    gap: 15px;
-    flex-wrap: wrap;
-}
+.hero-botones { display: flex; gap: 15px; flex-wrap: wrap; }
  
 .btn-hero-ver {
     padding: 12px 25px;
     background: #4fc3f7;
-    color: #fff;
+    color: #0f0f0f;
     border-radius: 8px;
     text-decoration: none;
     font-size: 15px;
     font-weight: bold;
 }
  
-.btn-hero-ver:hover { background: #0295b5; }
+.btn-hero-ver:hover { background: #0295b5; color: #fff; }
  
 .btn-hero-recomendar {
     padding: 12px 25px;
@@ -236,15 +218,8 @@ footer {
  
 .btn-hero-recomendar:hover { background: rgba(255,255,255,0.25); }
  
-.fila-peliculas {
-    padding: 0 40px;
-    margin-bottom: 40px;
-}
- 
-.fila-peliculas h2 {
-    font-size: 20px;
-    margin-bottom: 15px;
-}
+.fila-peliculas { padding: 0 40px; margin-bottom: 40px; }
+.fila-peliculas h2 { font-size: 20px; margin-bottom: 15px; }
  
 .carrusel {
     display: flex;
@@ -286,18 +261,12 @@ footer {
     text-overflow: ellipsis;
 }
  
-.carrusel-info span {
-    font-size: 12px;
-    color: #f5c518;
-}
+.carrusel-info span { font-size: 12px; color: #f5c518; }
  
 /* ===========================
    CATÁLOGO DE PELÍCULAS
 =========================== */
-.peliculas-container h1 {
-    margin-bottom: 30px;
-    color: #4fc3f7;
-}
+.peliculas-container h1 { margin-bottom: 30px; color: #4fc3f7; }
  
 .filtros {
     display: flex;
@@ -319,13 +288,14 @@ footer {
 .filtros button {
     padding: 10px 20px;
     background: #4fc3f7;
-    color: #fff;
+    color: #0f0f0f;
     border: none;
     border-radius: 5px;
     cursor: pointer;
+    font-weight: bold;
 }
  
-.filtros button:hover { background: #0295b5; }
+.filtros button:hover { background: #0295b5; color: #fff; }
  
 .btn-limpiar {
     padding: 10px 20px;
@@ -372,9 +342,10 @@ footer {
 .paginacion a {
     padding: 10px 20px;
     background: #4fc3f7;
-    color: #fff;
+    color: #0f0f0f;
     border-radius: 5px;
     text-decoration: none;
+    font-weight: bold;
 }
  
 .paginacion span { color: #888; }
@@ -402,21 +373,9 @@ footer {
     flex-shrink: 0;
 }
  
-.detalle-info {
-    flex: 1;
-    min-width: 280px;
-}
- 
-.detalle-info h1 {
-    font-size: 28px;
-    margin-bottom: 10px;
-}
- 
-.tagline {
-    color: #888;
-    font-style: italic;
-    margin-bottom: 20px;
-}
+.detalle-info { flex: 1; min-width: 280px; }
+.detalle-info h1 { font-size: 28px; margin-bottom: 10px; }
+.tagline { color: #888; font-style: italic; margin-bottom: 20px; }
  
 .detalle-meta {
     display: flex;
@@ -427,12 +386,7 @@ footer {
     font-size: 14px;
 }
  
-.generos {
-    display: flex;
-    gap: 8px;
-    flex-wrap: wrap;
-    margin-bottom: 20px;
-}
+.generos { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 20px; }
  
 .tag-genero {
     background: #4fc3f722;
@@ -443,27 +397,24 @@ footer {
     font-size: 13px;
 }
  
-.sinopsis {
-    color: #ccc;
-    line-height: 1.7;
-    margin-bottom: 30px;
-}
+.sinopsis { color: #ccc; line-height: 1.7; margin-bottom: 30px; }
  
 .btn-vista {
     padding: 14px 30px;
     background: #4fc3f7;
-    color: #fff;
+    color: #0f0f0f;
     border: none;
     border-radius: 8px;
     font-size: 16px;
+    font-weight: bold;
     cursor: pointer;
     margin-bottom: 15px;
     display: block;
     transition: background 0.2s;
 }
  
-.btn-vista:hover { background: #0295b5; }
-.btn-vista.visto { background: #333; cursor: not-allowed; }
+.btn-vista:hover { background: #0295b5; color: #fff; }
+.btn-vista.visto { background: #333; cursor: not-allowed; color: #fff; }
  
 .btn-vista.quitar {
     background: #333;
@@ -485,6 +436,124 @@ footer {
     color: #6bff6b;
 }
  
+.trailer-container { margin-bottom: 30px; }
+ 
+.trailer-container h3 {
+    font-size: 16px;
+    margin-bottom: 12px;
+    color: #4fc3f7;
+}
+ 
+.trailer-container iframe {
+    width: 100%;
+    height: 315px;
+    border-radius: 10px;
+}
+ 
+/* ===========================
+   VALORACIONES Y RESEÑAS
+=========================== */
+.valoracion-seccion,
+.resenas-seccion {
+    margin-top: 50px;
+    padding-top: 30px;
+    border-top: 1px solid #333;
+}
+ 
+.valoracion-seccion h2,
+.resenas-seccion h2 {
+    color: #4fc3f7;
+    margin-bottom: 20px;
+    font-size: 20px;
+}
+ 
+.form-valoracion {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    max-width: 600px;
+}
+ 
+.estrellas-input {
+    display: flex;
+    flex-direction: row-reverse;
+    gap: 5px;
+    width: fit-content;
+}
+ 
+.estrellas-input input { display: none; }
+ 
+.estrellas-input label {
+    font-size: 36px;
+    color: #444;
+    cursor: pointer;
+    transition: color 0.2s;
+}
+ 
+.estrellas-input label:hover,
+.estrellas-input label:hover ~ label,
+.estrellas-input input:checked ~ label {
+    color: #f5c518;
+}
+ 
+.form-valoracion textarea {
+    padding: 12px;
+    background: #1a1a2e;
+    border: 1px solid #333;
+    border-radius: 8px;
+    color: #fff;
+    font-size: 14px;
+    resize: vertical;
+    font-family: Arial, sans-serif;
+}
+ 
+.form-valoracion textarea:focus {
+    outline: none;
+    border-color: #4fc3f7;
+}
+ 
+.btn-valorar {
+    padding: 12px 25px;
+    background: #4fc3f7;
+    color: #0f0f0f;
+    border: none;
+    border-radius: 8px;
+    font-size: 15px;
+    font-weight: bold;
+    cursor: pointer;
+    width: fit-content;
+    transition: background 0.2s;
+}
+ 
+.btn-valorar:hover { background: #0295b5; color: #fff; }
+ 
+.resenas-lista { display: flex; flex-direction: column; gap: 15px; }
+ 
+.resena-card {
+    background: #1a1a2e;
+    border-radius: 10px;
+    padding: 20px;
+    border: 1px solid #333;
+}
+ 
+.resena-card.mi-resena {
+    border-color: #4fc3f7;
+    background: #4fc3f711;
+}
+ 
+.resena-header {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    margin-bottom: 10px;
+    flex-wrap: wrap;
+}
+ 
+.resena-autor { font-weight: bold; font-size: 14px; }
+.resena-estrellas { color: #f5c518; font-size: 18px; letter-spacing: 2px; }
+.resena-fecha { color: #666; font-size: 12px; margin-left: auto; }
+.resena-comentario { color: #ccc; font-size: 14px; line-height: 1.6; }
+ 
 /* ===========================
    RECOMENDADOR
 =========================== */
@@ -494,16 +563,8 @@ footer {
     padding: 40px 20px;
 }
  
-.recomendador-container h1 {
-    color: #4fc3f7;
-    margin-bottom: 10px;
-}
- 
-.subtitulo {
-    color: #888;
-    margin-bottom: 40px;
-}
- 
+.recomendador-container h1 { color: #4fc3f7; margin-bottom: 10px; }
+.subtitulo { color: #888; margin-bottom: 40px; }
 .form-recomendador .campo { margin-bottom: 30px; }
  
 .form-recomendador .campo > label {
@@ -516,6 +577,10 @@ footer {
     display: flex;
     flex-wrap: wrap;
     gap: 10px;
+    border: 2px solid transparent;
+    border-radius: 10px;
+    padding: 5px;
+    transition: border 0.2s;
 }
  
 .opcion {
@@ -542,17 +607,17 @@ footer {
     width: 100%;
     padding: 15px;
     background: #4fc3f7;
-    color: #fff;
+    color: #0f0f0f;
     border: none;
     border-radius: 10px;
     font-size: 18px;
+    font-weight: bold;
     cursor: pointer;
     margin-top: 10px;
     transition: background 0.2s;
 }
  
-.btn-recomendar:hover { background: #0295b5; }
- 
+.btn-recomendar:hover { background: #0295b5; color: #fff; }
 .resultados { margin-top: 50px; }
 .resultados h2 { color: #4fc3f7; margin-bottom: 20px; }
  
@@ -617,7 +682,6 @@ footer {
  
 .perfil-seccion { margin-bottom: 40px; }
 .perfil-seccion h2 { color: #4fc3f7; margin-bottom: 20px; font-size: 20px; }
- 
 .retos-lista { display: flex; flex-direction: column; gap: 15px; }
  
 .reto-card {
@@ -642,7 +706,6 @@ footer {
 .reto-header h3 { font-size: 16px; }
 .reto-xp { color: #4fc3f7; font-size: 13px; font-weight: bold; }
 .reto-desc { color: #888; font-size: 13px; margin-bottom: 12px; }
- 
 .progreso-container { display: flex; align-items: center; gap: 15px; }
  
 .progreso-barra {
@@ -661,7 +724,6 @@ footer {
 }
  
 .progreso-texto { color: #888; font-size: 13px; white-space: nowrap; }
- 
 .historial-lista { display: flex; flex-direction: column; gap: 10px; }
  
 .historial-item {
@@ -710,7 +772,6 @@ footer {
 .admin-seccion h2 { color: #4fc3f7; margin-bottom: 15px; }
 .admin-hint { color: #888; font-size: 13px; margin-bottom: 20px; }
 .admin-hint a { color: #4fc3f7; }
- 
 .admin-form { display: flex; gap: 10px; flex-wrap: wrap; }
  
 .admin-form input {
@@ -727,15 +788,15 @@ footer {
 .admin-form button {
     padding: 10px 20px;
     background: #4fc3f7;
-    color: #fff;
+    color: #0f0f0f;
     border: none;
     border-radius: 5px;
     cursor: pointer;
+    font-weight: bold;
 }
  
-.admin-form button:hover { background: #0295b5; }
+.admin-form button:hover { background: #0295b5; color: #fff; }
 .admin-tabla { overflow-x: auto; }
- 
 .admin-tabla table { width: 100%; border-collapse: collapse; }
  
 .admin-tabla th {
@@ -789,26 +850,3 @@ footer {
 }
  
 .btn-importar:hover { background: #4fc3f722; }
-
-.opciones-grid {
-    border: 2px solid transparent;
-    border-radius: 10px;
-    padding: 5px;
-    transition: border 0.2s;
-}
-
-.trailer-container {
-    margin-bottom: 30px;
-}
-
-.trailer-container h3 {
-    font-size: 16px;
-    margin-bottom: 12px;
-    color: #4fc3f7;
-}
-
-.trailer-container iframe {
-    width: 100%;
-    height: 315px;
-    border-radius: 10px;
-}
