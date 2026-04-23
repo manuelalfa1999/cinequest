@@ -73,6 +73,25 @@ function obtener_peliculas_por_genero($genero_id, $duracion_max = null) {
     return fallback_por_genero($genero_id, $duracion_max);
 }
 
+function obtener_trailer($tmdb_id) {
+    $resultado = tmdb_get('/movie/' . $tmdb_id . '/videos');
+    if (!$resultado) return null;
+
+    $videos = $resultado['results'] ?? [];
+    foreach ($videos as $video) {
+        if ($video['type'] === 'Trailer' && $video['site'] === 'YouTube') {
+            return $video['key'];
+        }
+    }
+    // Si no hay trailer, buscar cualquier teaser
+    foreach ($videos as $video) {
+        if ($video['site'] === 'YouTube') {
+            return $video['key'];
+        }
+    }
+    return null;
+}
+
 // ── FUNCIONES FALLBACK ──────────────────────────────────────────
 
 function fallback_peliculas_populares($pagina = 1) {
