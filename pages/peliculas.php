@@ -5,23 +5,42 @@ if (!isset($_SESSION['usuario_id'])) {
     exit;
 }
 require_once '../api/tmdb.php';
-
+ 
 $pagina = isset($_GET['pagina']) ? (int)$_GET['pagina'] : 1;
 $busqueda = isset($_GET['buscar']) ? trim($_GET['buscar']) : '';
 $genero_id = isset($_GET['genero']) ? (int)$_GET['genero'] : null;
-
-if ($busqueda) {
-    $resultado = buscar_pelicula($busqueda);
-} elseif ($genero_id) {
-    $resultado = obtener_peliculas_por_genero($genero_id);
+$actor = isset($_GET['actor']) ? trim($_GET['actor']) : '';
+$anio = isset($_GET['anio']) ? trim($_GET['anio']) : '';
+ 
+if ($actor) {
+    // Buscar actor primero
+    $actor_result = tmdb_get('/search/person', ['query' => $actor]);
+    $actor_id = $actor_result['results'][0]['id'] ?? null;
+    if ($actor_id) {
+        $resultado = tmdb_get('/discover/movie', ['with_cast' => $actor_id, 'sort_by' => 'popularity.desc']);
+    } else {
+        $resultado = ['results' => [], 'total_pages' => 0];
+    }
+} elseif ($busqueda) {
+    $params = ['query' => $busqueda];
+    if ($anio) $params['year'] = $anio;
+    $resultado = tmdb_get('/search/movie', $params);
+} elseif ($genero_id || $anio) {
+    $params = ['sort_by' => 'popularity.desc'];
+    if ($genero_id) $params['with_genres'] = $genero_id;
+    if ($anio) {
+        $params['primary_release_date.gte'] = $anio . '-01-01';
+        $params['primary_release_date.lte'] = $anio . '-12-31';
+    }
+    $resultado = tmdb_get('/discover/movie', $params) ?? obtener_peliculas_populares($pagina);
 } else {
     $resultado = obtener_peliculas_populares($pagina);
 }
-
+ 
 $peliculas = $resultado['results'] ?? [];
 $total_paginas = $resultado['total_pages'] ?? 1;
 if ($total_paginas > 500) $total_paginas = 500;
-
+ 
 $generos = [
     28 => 'Acción', 12 => 'Aventura', 16 => 'Animación',
     35 => 'Comedia', 80 => 'Crimen', 99 => 'Documental',
@@ -31,13 +50,17 @@ $generos = [
 ];
 ?>
 <?php include '../includes/header.php'; ?>
-
+ 
 <main class="peliculas-container">
     <h1>🎬 Catálogo de Películas</h1>
-
+ 
     <form method="GET" class="filtros">
         <input type="text" name="buscar" placeholder="Buscar película..." 
                value="<?= htmlspecialchars($busqueda) ?>">
+        <input type="text" name="actor" placeholder="Buscar por actor..."
+               value="<?= htmlspecialchars($actor) ?>">
+        <input type="number" name="anio" placeholder="Año (ej: 2020)" min="1900" max="2030"
+               value="<?= htmlspecialchars($anio) ?>" style="width:130px">
         <select name="genero">
             <option value="">Todos los géneros</option>
             <?php foreach ($generos as $id => $nombre): ?>
@@ -49,12 +72,12 @@ $generos = [
         <button type="submit">Buscar</button>
         <a href="peliculas.php" class="btn-limpiar">Limpiar</a>
     </form>
-
+ 
     <div class="grid-peliculas">
         <?php foreach ($peliculas as $pelicula): ?>
             <?php if (empty($pelicula['poster_path'])) continue; ?>
             <a href="pelicula.php?id=<?= $pelicula['id'] ?>" class="tarjeta-pelicula">
-                <img src="<?= poster_url($pelicula['poster_path']) ?>" 
+                <img src="<?= TMDB_IMG_URL . $pelicula['poster_path'] ?>" 
                      alt="<?= htmlspecialchars($pelicula['title']) ?>">
                 <div class="tarjeta-info">
                     <h3><?= htmlspecialchars($pelicula['title']) ?></h3>
@@ -64,7 +87,7 @@ $generos = [
             </a>
         <?php endforeach; ?>
     </div>
-
+ 
     <?php if (!$busqueda && !$genero_id): ?>
     <div class="paginacion">
         <?php if ($pagina > 1): ?>
@@ -77,5 +100,5 @@ $generos = [
     </div>
     <?php endif; ?>
 </main>
-
+ 
 <?php include '../includes/footer.php'; ?>

@@ -32,6 +32,13 @@ $mapa_tiempo = [
     'mas2h'  => 999,
 ];
 
+$mapa_momento = [
+    'manana'    => [35, 10751, 16],
+    'tarde'     => [28, 12, 35],
+    'noche'     => [53, 27, 9648],
+    'madrugada' => [27, 878, 53],
+];
+
 $mapa_decada = [
     '80s'     => ['1980-01-01', '1989-12-31'],
     '90s'     => ['1990-01-01', '1999-12-31'],
@@ -50,45 +57,47 @@ $mapa_idioma = [
     'ko' => 'Coreano',
 ];
 
-$generos_lista = [
-    28 => 'Acción', 12 => 'Aventura', 16 => 'Animación',
-    35 => 'Comedia', 80 => 'Crimen', 99 => 'Documental',
-    18 => 'Drama', 14 => 'Fantasía', 27 => 'Terror',
-    10749 => 'Romance', 878 => 'Ciencia ficción', 53 => 'Thriller',
-];
-
 $peliculas = [];
 $buscado = false;
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $buscado = true;
-    $animo    = $_POST['animo'] ?? '';
-    $compania = $_POST['compania'] ?? '';
-    $tiempo   = $_POST['tiempo'] ?? '';
-    $genero_extra = (int)($_POST['genero_extra'] ?? 0);
-    $decada   = $_POST['decada'] ?? '';
-    $idioma   = $_POST['idioma'] ?? '';
+    $buscado        = true;
+    $animo          = $_POST['animo'] ?? '';
+    $compania       = $_POST['compania'] ?? '';
+    $tiempo         = $_POST['tiempo'] ?? '';
+    $concentracion  = $_POST['concentracion'] ?? '';
+    $momento        = $_POST['momento'] ?? '';
+    $decada         = $_POST['decada'] ?? '';
+    $idioma         = $_POST['idioma'] ?? '';
     $puntuacion_min = (float)($_POST['puntuacion_min'] ?? 0);
 
     $generos_animo    = $mapa_animo[$animo] ?? [];
     $generos_compania = $mapa_compania[$compania] ?? [];
+    $generos_momento  = $mapa_momento[$momento] ?? [];
 
     $generos_comunes = array_intersect($generos_animo, $generos_compania);
     $generos_finales = !empty($generos_comunes) ? $generos_comunes : $generos_animo;
 
-    // Si el usuario eligió género extra, usarlo directamente
-    if ($genero_extra) {
-        $genero_id = $genero_extra;
-    } else {
-        $genero_id = $generos_finales[array_key_first($generos_finales)] ?? 28;
+    if (!empty($generos_momento)) {
+        $mix = array_intersect($generos_finales, $generos_momento);
+        if (!empty($mix)) $generos_finales = $mix;
     }
 
+    $genero_id = $generos_finales[array_key_first($generos_finales)] ?? 28;
     $duracion_max = $mapa_tiempo[$tiempo] ?? null;
 
     $params = ['with_genres' => $genero_id, 'sort_by' => 'popularity.desc'];
 
     if ($duracion_max && $duracion_max !== 999) {
         $params['with_runtime.lte'] = $duracion_max;
+    }
+
+    if ($concentracion === 'compleja' || $concentracion === 'giros') {
+        $params['sort_by'] = 'vote_average.desc';
+        $params['vote_average.gte'] = 7;
+        $params['vote_count.gte'] = $concentracion === 'compleja' ? 200 : 100;
+    } elseif ($concentracion === 'normal') {
+        $params['sort_by'] = 'vote_average.desc';
     }
 
     if ($decada && isset($mapa_decada[$decada])) {
@@ -210,21 +219,53 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             </div>
         </div>
 
+        <div class="campo">
+            <label>💡 ¿Qué nivel de concentración tienes?</label>
+            <div class="opciones-grid">
+                <label class="opcion <?= ($_POST['concentracion'] ?? '') === 'facil' ? 'seleccionada' : '' ?>">
+                    <input type="radio" name="concentracion" value="facil" required>
+                    😴 Fácil de seguir
+                </label>
+                <label class="opcion <?= ($_POST['concentracion'] ?? '') === 'normal' ? 'seleccionada' : '' ?>">
+                    <input type="radio" name="concentracion" value="normal">
+                    🧠 Normal
+                </label>
+                <label class="opcion <?= ($_POST['concentracion'] ?? '') === 'compleja' ? 'seleccionada' : '' ?>">
+                    <input type="radio" name="concentracion" value="compleja">
+                    🤯 Compleja y profunda
+                </label>
+                <label class="opcion <?= ($_POST['concentracion'] ?? '') === 'giros' ? 'seleccionada' : '' ?>">
+                    <input type="radio" name="concentracion" value="giros">
+                    🌀 Con giros de guión
+                </label>
+            </div>
+        </div>
+
+        <div class="campo">
+            <label>⏳ ¿En qué momento del día estás?</label>
+            <div class="opciones-grid">
+                <label class="opcion <?= ($_POST['momento'] ?? '') === 'manana' ? 'seleccionada' : '' ?>">
+                    <input type="radio" name="momento" value="manana" required>
+                    🌅 Mañana
+                </label>
+                <label class="opcion <?= ($_POST['momento'] ?? '') === 'tarde' ? 'seleccionada' : '' ?>">
+                    <input type="radio" name="momento" value="tarde">
+                    ☀️ Tarde
+                </label>
+                <label class="opcion <?= ($_POST['momento'] ?? '') === 'noche' ? 'seleccionada' : '' ?>">
+                    <input type="radio" name="momento" value="noche">
+                    🌙 Noche
+                </label>
+                <label class="opcion <?= ($_POST['momento'] ?? '') === 'madrugada' ? 'seleccionada' : '' ?>">
+                    <input type="radio" name="momento" value="madrugada">
+                    🌃 Madrugada
+                </label>
+            </div>
+        </div>
+
         <div class="filtros-extra">
             <h3>🔧 Filtros adicionales (opcionales)</h3>
-
             <div class="filtros-extra-grid">
-                <div class="filtro-extra-campo">
-                    <label>🎭 Género específico</label>
-                    <select name="genero_extra">
-                        <option value="">Cualquier género</option>
-                        <?php foreach ($generos_lista as $id => $nombre): ?>
-                            <option value="<?= $id ?>" <?= ($_POST['genero_extra'] ?? '') == $id ? 'selected' : '' ?>>
-                                <?= $nombre ?>
-                            </option>
-                        <?php endforeach; ?>
-                    </select>
-                </div>
 
                 <div class="filtro-extra-campo">
                     <label>📅 Década</label>
@@ -259,11 +300,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                         <option value="8" <?= ($_POST['puntuacion_min'] ?? '') == '8' ? 'selected' : '' ?>>8+ — Excelente</option>
                     </select>
                 </div>
+
             </div>
         </div>
 
         <div id="aviso-filtros" style="display:none; background:#4fc3f722; border:1px solid #4fc3f7; color:#4fc3f7; padding:12px 20px; border-radius:8px; margin-bottom:15px;">
-            ⚠️ Para una buena recomendación selecciona las tres opciones — cómo te sientes, con quién y cuánto tiempo tienes.
+            ⚠️ Para una buena recomendación selecciona todas las opciones principales.
         </div>
 
         <button type="submit" class="btn-recomendar">🎯 Recomendar películas</button>

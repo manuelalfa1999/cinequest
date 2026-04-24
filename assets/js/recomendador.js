@@ -1,4 +1,3 @@
-// Al cargar la página, sincronizar opciones ya marcadas por PHP
 document.querySelectorAll('.opcion.seleccionada').forEach(label => {
     const input = label.querySelector('input');
     if (input) input.checked = true;
@@ -17,19 +16,30 @@ document.querySelectorAll('.opcion').forEach(label => {
 });
 
 document.querySelector('.btn-recomendar').addEventListener('click', function(e) {
-    const animo    = document.querySelector('input[name="animo"]:checked');
-    const compania = document.querySelector('input[name="compania"]:checked');
-    const tiempo   = document.querySelector('input[name="tiempo"]:checked');
+    const animo        = document.querySelector('input[name="animo"]:checked');
+    const compania     = document.querySelector('input[name="compania"]:checked');
+    const tiempo       = document.querySelector('input[name="tiempo"]:checked');
+    const concentracion= document.querySelector('input[name="concentracion"]:checked');
+    const momento      = document.querySelector('input[name="momento"]:checked');
 
     const aviso = document.getElementById('aviso-filtros');
+    const campos = [
+        { val: animo,         sel: '.campo:nth-child(1) .opciones-grid' },
+        { val: compania,      sel: '.campo:nth-child(2) .opciones-grid' },
+        { val: tiempo,        sel: '.campo:nth-child(3) .opciones-grid' },
+        { val: concentracion, sel: '.campo:nth-child(4) .opciones-grid' },
+        { val: momento,       sel: '.campo:nth-child(5) .opciones-grid' },
+    ];
 
-    if (!animo || !compania || !tiempo) {
+    const falta = campos.some(c => !c.val);
+
+    if (falta) {
         e.preventDefault();
         aviso.style.display = 'block';
-
-        if (!animo) document.querySelector('.campo:nth-child(1) .opciones-grid').style.border = '2px solid #4fc3f7';
-        if (!compania) document.querySelector('.campo:nth-child(2) .opciones-grid').style.border = '2px solid #4fc3f7';
-        if (!tiempo) document.querySelector('.campo:nth-child(3) .opciones-grid').style.border = '2px solid #4fc3f7';
+        campos.forEach(c => {
+            const el = document.querySelector(c.sel);
+            if (el) el.style.border = !c.val ? '2px solid #4fc3f7' : '2px solid transparent';
+        });
     } else {
         aviso.style.display = 'none';
     }
