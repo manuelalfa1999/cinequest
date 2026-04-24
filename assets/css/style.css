@@ -907,3 +907,171 @@ footer {
     margin-bottom: 15px;
     font-size: 14px;
 }
+
+/* ===========================
+   SISTEMA DE NIVELES
+=========================== */
+.nivel-badge {
+    display: inline-block;
+    padding: 4px 12px;
+    border-radius: 20px;
+    border: 1px solid;
+    font-size: 13px;
+    margin-top: 8px;
+    font-weight: bold;
+}
+
+.nivel-progreso-container {
+    background: #1a1a2e;
+    border-radius: 12px;
+    padding: 20px;
+    margin-bottom: 30px;
+}
+
+.nivel-progreso-header {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 10px;
+    font-size: 13px;
+    color: #888;
+}
+
+.nivel-barra {
+    background: #333;
+    border-radius: 10px;
+    height: 10px;
+    overflow: hidden;
+    margin-bottom: 15px;
+}
+
+.nivel-fill {
+    height: 100%;
+    background: linear-gradient(to right, #4fc3f7, #f5c518);
+    border-radius: 10px;
+    transition: width 0.5s;
+}
+
+.nivel-iconos {
+    display: flex;
+    justify-content: space-between;
+}
+
+.nivel-icono {
+    font-size: 24px;
+    opacity: 0.3;
+    transition: opacity 0.3s;
+}
+
+.nivel-icono.activo { opacity: 1; }
+
+.categoria-retos { margin-bottom: 30px; }
+
+.categoria-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 16px;
+    font-weight: bold;
+    padding: 10px 15px;
+    border-left: 4px solid;
+    background: #1a1a2e;
+    border-radius: 0 8px 8px 0;
+    margin-bottom: 15px;
+}
+
+.categoria-progreso {
+    margin-left: auto;
+    font-size: 13px;
+    opacity: 0.7;
+}
+
+.reto-card.bloqueado {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+/* ===========================
+   NOTIFICACIÓN DE NIVEL
+=========================== */
+.notificacion-nivel-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.85);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 9999;
+    animation: fadeIn 0.3s ease;
+}
+
+.notificacion-nivel-box {
+    background: #1a1a2e;
+    border: 2px solid #f5c518;
+    border-radius: 20px;
+    padding: 50px 60px;
+    text-align: center;
+    animation: scaleIn 0.4s ease;
+    max-width: 400px;
+}
+
+.notificacion-nivel-icono {
+    font-size: 80px;
+    margin-bottom: 20px;
+    animation: bounce 0.6s ease infinite alternate;
+}
+
+.notificacion-nivel-box h2 {
+    font-size: 28px;
+    color: #f5c518;
+    margin-bottom: 10px;
+}
+
+.notificacion-nivel-nombre {
+    font-size: 22px;
+    font-weight: bold;
+    color: #fff;
+    margin-bottom: 5px;
+}
+
+.notificacion-nivel-sub {
+    color: #888;
+    font-size: 14px;
+    margin-bottom: 30px;
+}
+
+.btn-cerrar-notificacion {
+    padding: 12px 35px;
+    background: #f5c518;
+    color: #0f0f0f;
+    border: none;
+    border-radius: 10px;
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+.btn-cerrar-notificacion:hover { background: #d4a500; }
+
+/* ===========================
+   NOTIFICACIÓN RETO (toast)
+=========================== */
+.toast-reto {
+    position: fixed;
+    bottom: 30px;
+    right: 30px;
+    background: #1a1a2e;
+    border: 1px solid #4fc3f7;
+    border-radius: 12px;
+    padding: 15px 20px;
+    color: #fff;
+    font-size: 14px;
+    z-index: 9998;
+    animation: slideIn 0.3s ease;
+    max-width: 300px;
+}
+
+@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+@keyframes scaleIn { from { transform: scale(0.7); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+@keyframes bounce { from { transform: translateY(0); } to { transform: translateY(-10px); } }
+@keyframes slideIn { from { transform: translateX(100px); opacity: 0; } to { transform: translateX(0); opacity: 1; } }

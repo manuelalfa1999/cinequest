@@ -8,34 +8,9 @@ if (!isset($_SESSION['usuario_id'])) {
 }
 require_once '../api/tmdb.php';
 require_once '../config/db.php';
+require_once '../includes/niveles.php';
 
-function actualizarRetos($pdo, $usuario_id, $pelicula) {
-    $stmt = $pdo->prepare('SELECT COUNT(*) as total FROM historial_visto WHERE usuario_id = ?');
-    $stmt->execute([$usuario_id]);
-    $total_vistas = $stmt->fetch()['total'];
-
-    $stmt = $pdo->prepare('SELECT r.id, r.objetivo FROM retos r 
-                           LEFT JOIN usuario_retos ur ON ur.reto_id = r.id AND ur.usuario_id = ?
-                           WHERE r.tipo = "peliculas_vistas" AND (ur.completado IS NULL OR ur.completado = 0)');
-    $stmt->execute([$usuario_id]);
-    $retos = $stmt->fetchAll();
-
-    foreach ($retos as $reto) {
-        upsertReto($pdo, $usuario_id, $reto['id'], $total_vistas, $reto['objetivo']);
-    }
-
-    if (($pelicula['runtime'] ?? 0) >= 120) {
-        $stmt = $pdo->prepare('SELECT r.id FROM retos r 
-                               LEFT JOIN usuario_retos ur ON ur.reto_id = r.id AND ur.usuario_id = ?
-                               WHERE r.tipo = "duracion" AND (ur.completado IS NULL OR ur.completado = 0)');
-        $stmt->execute([$usuario_id]);
-        $retos_duracion = $stmt->fetchAll();
-
-        foreach ($retos_duracion as $reto) {
-            upsertReto($pdo, $usuario_id, $reto['id'], 120, 120);
-        }
-    }
-}
+$usuario_id = $_SESSION['usuario_id'];
 
 function upsertReto($pdo, $usuario_id, $reto_id, $progreso, $objetivo) {
     $stmt = $pdo->prepare('SELECT id FROM usuario_retos WHERE usuario_id = ? AND reto_id = ?');
@@ -61,46 +36,117 @@ function upsertReto($pdo, $usuario_id, $reto_id, $progreso, $objetivo) {
         $xp = $stmt->fetch()['puntos_xp'] ?? 0;
         $stmt = $pdo->prepare('UPDATE usuarios SET puntos_xp = puntos_xp + ? WHERE id = ?');
         $stmt->execute([$xp, $usuario_id]);
+
+        $stmt = $pdo->prepare('SELECT puntos_xp FROM usuarios WHERE id = ?');
+        $stmt->execute([$usuario_id]);
+        $xp_nuevo = $stmt->fetch()['puntos_xp'];
+        $nivel_subido = actualizar_nivel_usuario($pdo, $usuario_id, $xp_nuevo);
+        if ($nivel_subido) {
+            $_SESSION['notificacion_nivel'] = $nivel_subido;
+        }
+
+        if (!isset($_SESSION['retos_completados'])) $_SESSION['retos_completados'] = [];
+        $_SESSION['retos_completados'][] = $reto_id;
+    }
+}
+
+function actualizarRetos($pdo, $usuario_id, $pelicula) {
+    // 1. Películas vistas
+    $stmt = $pdo->prepare('SELECT COUNT(*) as total FROM historial_visto WHERE usuario_id = ?');
+    $stmt->execute([$usuario_id]);
+    $total_vistas = $stmt->fetch()['total'];
+
+    $stmt = $pdo->prepare('SELECT r.id, r.objetivo FROM retos r 
+                           LEFT JOIN usuario_retos ur ON ur.reto_id = r.id AND ur.usuario_id = ?
+                           WHERE r.tipo = "peliculas_vistas" AND (ur.completado IS NULL OR ur.completado = 0)');
+    $stmt->execute([$usuario_id]);
+    foreach ($stmt->fetchAll() as $reto) {
+        upsertReto($pdo, $usuario_id, $reto['id'], $total_vistas, $reto['objetivo']);
+    }
+
+    // 2. Duración simple
+    if (($pelicula['runtime'] ?? 0) >= 120) {
+        $stmt = $pdo->prepare('SELECT r.id FROM retos r 
+                               LEFT JOIN usuario_retos ur ON ur.reto_id = r.id AND ur.usuario_id = ?
+                               WHERE r.tipo = "duracion" AND (ur.completado IS NULL OR ur.completado = 0)');
+        $stmt->execute([$usuario_id]);
+        foreach ($stmt->fetchAll() as $reto) {
+            upsertReto($pdo, $usuario_id, $reto['id'], 120, 120);
+        }
+    }
+
+    // 3. Duración múltiple
+    $stmt = $pdo->prepare('SELECT COUNT(*) as total FROM historial_visto WHERE usuario_id = ? AND duracion >= 120');
+    $stmt->execute([$usuario_id]);
+    $largas = $stmt->fetch()['total'];
+    if ($largas > 0) {
+        $stmt = $pdo->prepare('SELECT r.id, r.objetivo FROM retos r 
+                               LEFT JOIN usuario_retos ur ON ur.reto_id = r.id AND ur.usuario_id = ?
+                               WHERE r.tipo = "duracion_multiple" AND (ur.completado IS NULL OR ur.completado = 0)');
+        $stmt->execute([$usuario_id]);
+        foreach ($stmt->fetchAll() as $reto) {
+            upsertReto($pdo, $usuario_id, $reto['id'], $largas, $reto['objetivo']);
+        }
+    }
+
+    // 4. Géneros distintos
+    $stmt = $pdo->prepare('SELECT COUNT(DISTINCT genero_principal) as total FROM historial_visto WHERE usuario_id = ? AND genero_principal IS NOT NULL');
+    $stmt->execute([$usuario_id]);
+    $total_generos = $stmt->fetch()['total'];
+    if ($total_generos > 0) {
+        $stmt = $pdo->prepare('SELECT r.id, r.objetivo FROM retos r 
+                               LEFT JOIN usuario_retos ur ON ur.reto_id = r.id AND ur.usuario_id = ?
+                               WHERE r.tipo = "generos_distintos" AND (ur.completado IS NULL OR ur.completado = 0)');
+        $stmt->execute([$usuario_id]);
+        foreach ($stmt->fetchAll() as $reto) {
+            upsertReto($pdo, $usuario_id, $reto['id'], $total_generos, $reto['objetivo']);
+        }
+    }
+
+    // 5. Compañía
+    $stmt = $pdo->prepare('SELECT COUNT(*) as total FROM historial_visto WHERE usuario_id = ? AND compania IS NOT NULL AND compania != ""');
+    $stmt->execute([$usuario_id]);
+    $total_compania = $stmt->fetch()['total'];
+    if ($total_compania > 0) {
+        $stmt = $pdo->prepare('SELECT r.id, r.objetivo FROM retos r 
+                               LEFT JOIN usuario_retos ur ON ur.reto_id = r.id AND ur.usuario_id = ?
+                               WHERE r.tipo = "compania" AND (ur.completado IS NULL OR ur.completado = 0)');
+        $stmt->execute([$usuario_id]);
+        foreach ($stmt->fetchAll() as $reto) {
+            upsertReto($pdo, $usuario_id, $reto['id'], $total_compania, $reto['objetivo']);
+        }
     }
 }
 
 $tmdb_id = isset($_GET['id']) ? (int)$_GET['id'] : 0;
-if (!$tmdb_id) {
-    header('Location: peliculas.php');
-    exit;
-}
+if (!$tmdb_id) { header('Location: peliculas.php'); exit; }
 
 $pelicula = obtener_pelicula($tmdb_id);
-if (!$pelicula || isset($pelicula['status_code'])) {
-    header('Location: peliculas.php');
-    exit;
-}
+if (!$pelicula || isset($pelicula['status_code'])) { header('Location: peliculas.php'); exit; }
 
 $trailer_key = obtener_trailer($tmdb_id);
-$usuario_id = $_SESSION['usuario_id'];
 $mensaje = '';
 $mensaje_valoracion = '';
 
-// Comprobar si ya está marcada como vista
 $stmt = $pdo->prepare('SELECT id FROM historial_visto WHERE usuario_id = ? AND pelicula_id = ?');
 $stmt->execute([$usuario_id, $tmdb_id]);
 $ya_vista = $stmt->fetch();
 
-// Comprobar si ya tiene valoración
 $stmt = $pdo->prepare('SELECT * FROM valoraciones WHERE usuario_id = ? AND pelicula_id = ?');
 $stmt->execute([$usuario_id, $tmdb_id]);
 $mi_valoracion = $stmt->fetch();
 
-// Procesar marcar como vista
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['marcar_vista'])) {
     if (!$ya_vista) {
         $contexto = $_SESSION['ultimo_contexto'] ?? [];
-        $stmt = $pdo->prepare('INSERT INTO historial_visto (usuario_id, pelicula_id, estado_animo, compania) VALUES (?, ?, ?, ?)');
+        $stmt = $pdo->prepare('INSERT INTO historial_visto (usuario_id, pelicula_id, estado_animo, compania, genero_principal, duracion) VALUES (?, ?, ?, ?, ?, ?)');
         $stmt->execute([
             $usuario_id,
             $tmdb_id,
             $contexto['animo'] ?? null,
             $contexto['compania'] ?? null,
+            $pelicula['genres'][0]['id'] ?? null,
+            $pelicula['runtime'] ?? 0,
         ]);
         actualizarRetos($pdo, $usuario_id, $pelicula);
         $ya_vista = true;
@@ -110,7 +156,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['marcar_vista'])) {
     }
 }
 
-// Procesar quitar vista
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['quitar_vista']) && $_POST['quitar_vista'] == '1') {
     $stmt = $pdo->prepare('DELETE FROM historial_visto WHERE usuario_id = ? AND pelicula_id = ?');
     $stmt->execute([$usuario_id, $tmdb_id]);
@@ -119,54 +164,65 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['quitar_vista']) && $_
     $stmt->execute([$usuario_id]);
     $total_vistas = $stmt->fetch()['total'];
 
-    $stmt = $pdo->prepare('SELECT r.id, r.objetivo FROM retos r 
-                           INNER JOIN usuario_retos ur ON ur.reto_id = r.id AND ur.usuario_id = ?
-                           WHERE r.tipo = "peliculas_vistas"');
+    $stmt = $pdo->prepare('SELECT COUNT(*) as total FROM historial_visto WHERE usuario_id = ? AND duracion >= 120');
     $stmt->execute([$usuario_id]);
-    $retos = $stmt->fetchAll();
+    $largas = $stmt->fetch()['total'];
 
-    foreach ($retos as $reto) {
-        $completado = $total_vistas >= $reto['objetivo'] ? 1 : 0;
+    $stmt = $pdo->prepare('SELECT COUNT(DISTINCT genero_principal) as total FROM historial_visto WHERE usuario_id = ? AND genero_principal IS NOT NULL');
+    $stmt->execute([$usuario_id]);
+    $total_generos = $stmt->fetch()['total'];
+
+    $stmt = $pdo->prepare('SELECT COUNT(*) as total FROM historial_visto WHERE usuario_id = ? AND compania IS NOT NULL AND compania != ""');
+    $stmt->execute([$usuario_id]);
+    $total_compania = $stmt->fetch()['total'];
+
+    $stmt = $pdo->prepare('SELECT COUNT(*) as total FROM valoraciones WHERE usuario_id = ?');
+    $stmt->execute([$usuario_id]);
+    $total_val = $stmt->fetch()['total'];
+
+    $stmt = $pdo->prepare('SELECT ur.reto_id, ur.completado, r.tipo, r.objetivo, r.puntos_xp 
+                           FROM usuario_retos ur 
+                           JOIN retos r ON r.id = ur.reto_id 
+                           WHERE ur.usuario_id = ?');
+    $stmt->execute([$usuario_id]);
+    $todos_retos = $stmt->fetchAll();
+
+    foreach ($todos_retos as $ur) {
+        $nuevo_progreso = match($ur['tipo']) {
+            'peliculas_vistas'  => $total_vistas,
+            'duracion'          => ($largas > 0 ? 120 : 0),
+            'duracion_multiple' => $largas,
+            'generos_distintos' => $total_generos,
+            'compania'          => $total_compania,
+            'valoraciones'      => $total_val,
+            default             => null,
+        };
+
+        if ($nuevo_progreso === null) continue;
+
+        $nuevo_completado = $nuevo_progreso >= $ur['objetivo'] ? 1 : 0;
+
+        if ($ur['completado'] == 1 && $nuevo_completado == 0) {
+            $stmt = $pdo->prepare('UPDATE usuarios SET puntos_xp = GREATEST(0, puntos_xp - ?) WHERE id = ?');
+            $stmt->execute([$ur['puntos_xp'], $usuario_id]);
+        }
+
         $stmt = $pdo->prepare('UPDATE usuario_retos SET progreso = ?, completado = ?, fecha_completado = ?
                                WHERE usuario_id = ? AND reto_id = ?');
-        $stmt->execute([$total_vistas, $completado, null, $usuario_id, $reto['id']]);
+        $stmt->execute([$nuevo_progreso, $nuevo_completado, $nuevo_completado ? date('Y-m-d H:i:s') : null, $usuario_id, $ur['reto_id']]);
     }
 
-    if (($pelicula['runtime'] ?? 0) >= 120) {
-        $stmt = $pdo->prepare('SELECT pelicula_id FROM historial_visto WHERE usuario_id = ?');
-        $stmt->execute([$usuario_id]);
-        $otras = $stmt->fetchAll();
-
-        $tiene_otra_larga = false;
-        foreach ($otras as $otra) {
-            $datos = obtener_pelicula($otra['pelicula_id']);
-            if (($datos['runtime'] ?? 0) >= 120) {
-                $tiene_otra_larga = true;
-                break;
-            }
-        }
-
-        if (!$tiene_otra_larga) {
-            $stmt = $pdo->prepare('SELECT id, puntos_xp FROM retos WHERE tipo = "duracion"');
-            $stmt->execute();
-            $reto_dur = $stmt->fetch();
-
-            if ($reto_dur) {
-                $stmt = $pdo->prepare('UPDATE usuario_retos SET progreso = 0, completado = 0, fecha_completado = NULL
-                                       WHERE usuario_id = ? AND reto_id = ?');
-                $stmt->execute([$usuario_id, $reto_dur['id']]);
-
-                $stmt = $pdo->prepare('UPDATE usuarios SET puntos_xp = GREATEST(0, puntos_xp - ?) WHERE id = ?');
-                $stmt->execute([$reto_dur['puntos_xp'], $usuario_id]);
-            }
-        }
-    }
+    $stmt = $pdo->prepare('SELECT puntos_xp FROM usuarios WHERE id = ?');
+    $stmt->execute([$usuario_id]);
+    $xp_actual = $stmt->fetch()['puntos_xp'];
+    $nivel_nuevo = calcular_nivel($xp_actual);
+    $stmt = $pdo->prepare('UPDATE usuarios SET nivel = ? WHERE id = ?');
+    $stmt->execute([$nivel_nuevo, $usuario_id]);
 
     $ya_vista = false;
     $mensaje = '↩️ Película eliminada de tu historial.';
 }
 
-// Procesar valoración
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['guardar_valoracion'])) {
     $puntuacion = (int)$_POST['puntuacion'];
     $comentario = trim($_POST['comentario'] ?? '');
@@ -182,6 +238,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['guardar_valoracion'])
             $stmt = $pdo->prepare('INSERT INTO valoraciones (usuario_id, pelicula_id, puntuacion, comentario) VALUES (?, ?, ?, ?)');
             $stmt->execute([$usuario_id, $tmdb_id, $puntuacion, $comentario]);
             $mensaje_valoracion = '✅ Valoración guardada correctamente.';
+
+            $stmt = $pdo->prepare('SELECT COUNT(*) as total FROM valoraciones WHERE usuario_id = ?');
+            $stmt->execute([$usuario_id]);
+            $total_val = $stmt->fetch()['total'];
+            $stmt = $pdo->prepare('SELECT r.id, r.objetivo FROM retos r 
+                                   LEFT JOIN usuario_retos ur ON ur.reto_id = r.id AND ur.usuario_id = ?
+                                   WHERE r.tipo = "valoraciones" AND (ur.completado IS NULL OR ur.completado = 0)');
+            $stmt->execute([$usuario_id]);
+            foreach ($stmt->fetchAll() as $reto) {
+                upsertReto($pdo, $usuario_id, $reto['id'], $total_val, $reto['objetivo']);
+            }
         }
         $stmt = $pdo->prepare('SELECT * FROM valoraciones WHERE usuario_id = ? AND pelicula_id = ?');
         $stmt->execute([$usuario_id, $tmdb_id]);
@@ -189,11 +256,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['guardar_valoracion'])
     }
 }
 
-// Obtener todas las valoraciones de la película
 $stmt = $pdo->prepare('SELECT v.*, u.nombre FROM valoraciones v 
                        JOIN usuarios u ON u.id = v.usuario_id 
-                       WHERE v.pelicula_id = ? 
-                       ORDER BY v.fecha DESC');
+                       WHERE v.pelicula_id = ? ORDER BY v.fecha DESC');
 $stmt->execute([$tmdb_id]);
 $valoraciones = $stmt->fetchAll();
 
@@ -230,7 +295,7 @@ include '../includes/header.php';
                 <span>⭐ <?= number_format($pelicula['vote_average'], 1) ?>/10</span>
                 <span>🗳️ <?= number_format($pelicula['vote_count']) ?> votos</span>
                 <?php if (!empty($valoraciones)): ?>
-                    <span>🌟 <?= number_format($media_valoracion, 1) ?>/5 (<?= count($valoraciones) ?> reseñas)</span>
+                    <span>🌟 <?= number_format($media_valoracion, 0) ?>/5 (<?= count($valoraciones) ?> reseñas)</span>
                 <?php endif; ?>
             </div>
 
@@ -287,16 +352,13 @@ include '../includes/header.php';
     <?php if ($ya_vista): ?>
     <div class="valoracion-seccion">
         <h2>⭐ Tu valoración</h2>
-
         <?php if ($mensaje_valoracion): ?>
             <p class="<?= str_starts_with($mensaje_valoracion, '✅') ? 'exito' : 'error' ?>"><?= $mensaje_valoracion ?></p>
         <?php endif; ?>
-
         <form method="POST" class="form-valoracion">
             <div class="estrellas-input">
                 <?php for ($i = 5; $i >= 1; $i--): ?>
-                    <input type="radio" name="puntuacion" id="star<?= $i ?>" value="<?= $i ?>"
-                           >
+                    <input type="radio" name="puntuacion" id="star<?= $i ?>" value="<?= $i ?>">
                     <label for="star<?= $i ?>">★</label>
                 <?php endfor; ?>
             </div>
@@ -329,7 +391,19 @@ include '../includes/header.php';
         </div>
     </div>
     <?php endif; ?>
-
 </main>
+
+<?php if (!empty($_SESSION['retos_completados'])): ?>
+<div id="toast-reto" class="toast-reto">
+    🏆 ¡Reto completado! Revisa tu perfil para ver tu progreso.
+</div>
+<script>
+setTimeout(() => {
+    const t = document.getElementById('toast-reto');
+    if (t) t.style.display = 'none';
+}, 4000);
+</script>
+<?php unset($_SESSION['retos_completados']); ?>
+<?php endif; ?>
 
 <?php include '../includes/footer.php'; ?>
