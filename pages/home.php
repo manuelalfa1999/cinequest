@@ -24,6 +24,19 @@ foreach ($historial as $item) {
     }
 }
 
+// Pendientes del usuario
+$stmt = $pdo->prepare('SELECT pelicula_id FROM lista_pendientes WHERE usuario_id = ? ORDER BY fecha DESC LIMIT 10');
+$stmt->execute([$usuario_id]);
+$pendientes_ids = $stmt->fetchAll();
+
+$pendientes = [];
+foreach ($pendientes_ids as $item) {
+    $pelicula = obtener_pelicula($item['pelicula_id']);
+    if ($pelicula && !isset($pelicula['status_code'])) {
+        $pendientes[] = $pelicula;
+    }
+}
+
 $destacada = $peliculas_populares[0] ?? null;
 $destacada_detalle = $destacada ? obtener_pelicula($destacada['id']) : null;
 
@@ -49,6 +62,25 @@ include '../includes/header.php';
             </div>
         </div>
     </div>
+    <?php endif; ?>
+
+    <?php if (!empty($pendientes)): ?>
+    <section class="fila-peliculas">
+        <h2>📌 Mi lista de pendientes</h2>
+        <div class="carrusel">
+            <?php foreach ($pendientes as $pelicula): ?>
+                <?php if (empty($pelicula['poster_path'])) continue; ?>
+                <a href="pelicula.php?id=<?= $pelicula['id'] ?>" class="carrusel-item">
+                    <img src="<?= poster_url($pelicula['poster_path']) ?>"
+                         alt="<?= htmlspecialchars($pelicula['title']) ?>">
+                    <div class="carrusel-info">
+                        <p><?= htmlspecialchars($pelicula['title']) ?></p>
+                        <span>⭐ <?= number_format($pelicula['vote_average'], 1) ?></span>
+                    </div>
+                </a>
+            <?php endforeach; ?>
+        </div>
+    </section>
     <?php endif; ?>
 
     <?php if (!empty($ultimas_vistas)): ?>

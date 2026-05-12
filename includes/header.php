@@ -26,6 +26,7 @@ if (session_status() === PHP_SESSION_NONE) {
             <?php if ($_SESSION['rol'] === 'admin'): ?>
                 <a href="/cinequest/pages/admin.php">Panel Admin</a>
             <?php endif; ?>
+            <a href="/cinequest/pages/ranking.php">🏆 Ranking</a>
             <a href="/cinequest/pages/perfil.php">Mi Perfil</a>
             <a href="/cinequest/pages/logout.php">Cerrar sesión</a>
         </div>
