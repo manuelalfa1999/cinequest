@@ -15,7 +15,8 @@ document.querySelectorAll('.opcion').forEach(label => {
     });
 });
 
-document.querySelector('.btn-recomendar').addEventListener('click', function(e) {
+const btnRecomendar = document.querySelector('.btn-recomendar');
+if (btnRecomendar) btnRecomendar.addEventListener('click', function(e) {
     const animo        = document.querySelector('input[name="animo"]:checked');
     const compania     = document.querySelector('input[name="compania"]:checked');
     const tiempo       = document.querySelector('input[name="tiempo"]:checked');

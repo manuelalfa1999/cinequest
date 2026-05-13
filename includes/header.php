@@ -17,9 +17,11 @@ if (session_status() === PHP_SESSION_NONE) {
     <a href="/cinequest/index.php">
         <img src="/cinequest/assets/img/logo.svg" alt="CineQuest" style="height:60px; vertical-align:middle;">
     </a>
+
     <?php if (isset($_SESSION['usuario_id'])): ?>
-        <div class="nav-links">
-            <span> 👤 <?= htmlspecialchars($_SESSION['nombre']) ?></span>
+        <button class="hamburger" id="hamburger" onclick="toggleMenu()">☰</button>
+        <div class="nav-links" id="nav-links">
+            <span>👤 <?= htmlspecialchars($_SESSION['nombre']) ?></span>
             <a href="/cinequest/index.php">Inicio</a>
             <a href="/cinequest/pages/peliculas.php">Catálogo</a>
             <a href="/cinequest/pages/recomendador.php">¿Qué veo hoy?</a>
@@ -37,6 +39,15 @@ if (session_status() === PHP_SESSION_NONE) {
         </div>
     <?php endif; ?>
 </nav>
+
+<script>
+function toggleMenu() {
+    const nav = document.getElementById('nav-links');
+    const btn = document.getElementById('hamburger');
+    nav.classList.toggle('abierto');
+    btn.textContent = nav.classList.contains('abierto') ? '✕' : '☰';
+}
+</script>
 
 <?php
 require_once __DIR__ . '/../api/tmdb.php';

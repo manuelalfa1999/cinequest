@@ -1234,3 +1234,56 @@ footer {
 @keyframes scaleIn { from { transform: scale(0.7); opacity: 0; } to { transform: scale(1); opacity: 1; } }
 @keyframes bounce { from { transform: translateY(0); } to { transform: translateY(-10px); } }
 @keyframes slideIn { from { transform: translateX(100px); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+/* ===========================
+   MENÚ HAMBURGUESA
+=========================== */
+.hamburger {
+    display: none;
+    background: none;
+    border: 2px solid #4fc3f7;
+    color: #4fc3f7;
+    font-size: 22px;
+    padding: 5px 12px;
+    border-radius: 8px;
+    cursor: pointer;
+    margin-left: auto;
+}
+
+@media (max-width: 768px) {
+    .hamburger { display: block; }
+
+    .nav-links {
+        display: none;
+        position: absolute;
+        top: 70px;
+        left: 0;
+        right: 0;
+        background: #1a1a2e;
+        flex-direction: column;
+        padding: 15px 20px;
+        gap: 5px;
+        z-index: 999;
+        border-bottom: 1px solid #333;
+        box-shadow: 0 4px 20px rgba(0,0,0,0.5);
+    }
+
+    .nav-links.abierto {
+        display: flex;
+    }
+
+    .nav-links a, .nav-links span {
+        padding: 10px 0;
+        border-bottom: 1px solid #333;
+        font-size: 15px;
+        width: 100%;
+    }
+
+    .nav-links a:last-child {
+        border-bottom: none;
+    }
+
+    nav {
+        position: relative;
+        flex-wrap: nowrap;
+    }
+}
