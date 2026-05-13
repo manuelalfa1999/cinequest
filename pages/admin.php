@@ -1,6 +1,4 @@
 <?php
-ini_set('display_errors', 1);
-error_reporting(E_ALL);
 if (session_status() === PHP_SESSION_NONE) session_start();
 if (!isset($_SESSION['usuario_id']) || $_SESSION['rol'] !== 'admin') {
     header('Location: login.php');
@@ -183,7 +181,7 @@ include '../includes/header.php';
                         <td><?= htmlspecialchars($u['email']) ?></td>
                         <td>
                             <span class="rol-badge <?= $u['rol'] ?>">
-                                <?= $u['rol'] === 'admin' ? '⚙️ Admin' : '👤 Usuario' ?>
+                                <?= $u['rol'] === 'admin' ? 'Admin' : 'Usuario' ?>
                             </span>
                         </td>
                         <td>Nivel <?= $u['nivel'] ?? 1 ?></td>
@@ -256,12 +254,13 @@ include '../includes/header.php';
                             <td><?= $p['duracion'] ?> min</td>
                             <td><?= substr($p['fecha_estreno'] ?? '', 0, 4) ?></td>
                             <td>
-                                <a href="/cinequest/pages/pelicula.php?id=<?= $p['tmdb_id'] ?>" class="btn-ver">Ver</a>
-                                <form method="POST" style="display:inline"
-                                      onsubmit="return confirm('¿Eliminar esta película?')">
-                                    <input type="hidden" name="pelicula_id" value="<?= $p['id'] ?>">
-                                    <button type="submit" name="eliminar_pelicula" class="btn-eliminar">Eliminar</button>
-                                </form>
+                                <div style="display:flex;flex-direction:column;gap:5px;min-width:80px">
+                                    <a href="/cinequest/pages/pelicula.php?id=<?= $p['tmdb_id'] ?>" class="btn-ver">Ver</a>
+                                    <form method="POST" onsubmit="return confirm('¿Eliminar esta película?')">
+                                        <input type="hidden" name="pelicula_id" value="<?= $p['id'] ?>">
+                                        <button type="submit" name="eliminar_pelicula" class="btn-eliminar">Eliminar</button>
+                                    </form>
+                                </div>
                             </td>
                         </tr>
                         <?php endforeach; ?>

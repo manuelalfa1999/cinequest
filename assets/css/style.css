@@ -52,10 +52,28 @@ nav {
 nav a {
     color: #4fc3f7;
     text-decoration: none;
+    padding: 4px 8px;
+    border-radius: 5px;
+    transition: background 0.2s, color 0.2s;
+}
+
+nav a:has(img) {
+    padding: 0;
+    background: none !important;
+    transform: none !important;
+}
+
+nav a:has(img):hover {
+    background: none !important;
+    transform: none !important;
 }
  
 nav a:hover {
-    text-decoration: underline;
+    text-decoration: none;
+    background: #4fc3f7;
+    color: #0f0f0f;
+    border-radius: 5px;
+    padding: 4px 8px;
 }
  
 /* ===========================
@@ -1222,8 +1240,18 @@ footer {
    ADMIN AMPLIADO
 =========================== */
 .rol-badge { padding: 3px 10px; border-radius: 20px; font-size: 12px; font-weight: bold; }
-.rol-badge.admin { background: #4fc3f722; border: 1px solid #4fc3f7; color: #4fc3f7; }
-.rol-badge.usuario { background: #33333322; border: 1px solid #666; color: #888; }
+.rol-badge.admin {
+    background: #4fc3f722;
+    border: 1px solid #4fc3f7;
+    color: #4fc3f7;
+    white-space: nowrap;
+}
+.rol-badge.usuario {
+    background: #33333322;
+    border: 1px solid #666;
+    color: #888;
+    white-space: nowrap;
+}
 .select-rol { padding: 5px 8px; background: #0f0f0f; border: 1px solid #333; border-radius: 5px; color: #fff; font-size: 12px; margin-right: 5px; }
 .acciones-usuario { display: flex; align-items: center; gap: 5px; flex-wrap: wrap; }
 
@@ -1234,9 +1262,8 @@ footer {
 @keyframes scaleIn { from { transform: scale(0.7); opacity: 0; } to { transform: scale(1); opacity: 1; } }
 @keyframes bounce { from { transform: translateY(0); } to { transform: translateY(-10px); } }
 @keyframes slideIn { from { transform: translateX(100px); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
-/* ===========================
-   MENÚ HAMBURGUESA
-=========================== */
+nav a.nav-activo { background: #4fc3f7; color: #0f0f0f !important; font-weight: bold; }
+
 .hamburger {
     display: none;
     background: none;
@@ -1247,10 +1274,21 @@ footer {
     border-radius: 8px;
     cursor: pointer;
     margin-left: auto;
+    flex-shrink: 0;
 }
 
+/* ===========================
+   RESPONSIVE MÓVIL
+=========================== */
 @media (max-width: 768px) {
+
+    main { padding: 20px 15px; }
+    main.home-container { padding: 0; }
+
     .hamburger { display: block; }
+
+    nav { padding: 10px 15px; flex-wrap: nowrap; position: relative; }
+    nav img { height: 40px; }
 
     .nav-links {
         display: none;
@@ -1265,11 +1303,10 @@ footer {
         z-index: 999;
         border-bottom: 1px solid #333;
         box-shadow: 0 4px 20px rgba(0,0,0,0.5);
+        width: 100%;
     }
 
-    .nav-links.abierto {
-        display: flex;
-    }
+    .nav-links.abierto { display: flex; }
 
     .nav-links a, .nav-links span {
         padding: 10px 0;
@@ -1278,12 +1315,113 @@ footer {
         width: 100%;
     }
 
-    .nav-links a:last-child {
-        border-bottom: none;
-    }
+    .nav-links a:last-child { border-bottom: none; }
 
-    nav {
-        position: relative;
-        flex-wrap: nowrap;
-    }
+    .hero-banner { height: 280px; }
+    .hero-overlay { padding: 20px 15px; align-items: flex-end; }
+    .hero-content { max-width: 100%; }
+    .hero-content h1 { font-size: 20px; margin-bottom: 8px; }
+    .hero-sinopsis { display: none; }
+    .btn-hero-ver, .btn-hero-recomendar { padding: 10px 16px; font-size: 13px; }
+
+    .fila-peliculas { padding: 0 15px; margin-bottom: 25px; }
+    .fila-peliculas h2 { font-size: 16px; }
+    .carrusel-item { width: 110px; }
+    .carrusel-item img { width: 110px; height: 165px; }
+    .carrusel-info p { font-size: 11px; }
+
+    .peliculas-container h1 { font-size: 20px; }
+    .filtros { flex-direction: column; gap: 8px; }
+    .filtros input, .filtros select, .filtros button, .btn-limpiar { width: 100%; }
+    .grid-peliculas { grid-template-columns: repeat(3, 1fr); gap: 10px; }
+    .tarjeta-info h3 { font-size: 12px; }
+
+    .detalle-container { padding: 20px 15px 60px; }
+    .detalle-hero { flex-direction: column; align-items: center; gap: 20px; }
+    .detalle-poster { width: 180px; height: 270px; }
+    .detalle-info { min-width: unset; width: 100%; }
+    .detalle-info h1 { font-size: 20px; }
+    .detalle-meta { font-size: 12px; gap: 10px; }
+    .trailer-container iframe { height: 200px; }
+    .btn-vista { font-size: 14px; padding: 12px 20px; }
+
+    .recomendador-container { padding: 20px 15px; }
+    .recomendador-container h1 { font-size: 20px; }
+    .form-recomendador .campo > label { font-size: 14px; }
+    .opcion { padding: 8px 12px; font-size: 12px; }
+    .btn-recomendar { font-size: 15px; padding: 13px; }
+    .filtros-extra-grid { grid-template-columns: 1fr 1fr; gap: 12px; }
+
+    .perfil-container { padding: 20px 15px 60px; }
+    .perfil-header { flex-direction: column; text-align: center; padding: 20px 15px; gap: 15px; }
+    .perfil-avatar { font-size: 50px; }
+    .perfil-xp { width: 100%; padding: 15px; }
+    .xp-numero { font-size: 28px; }
+    .perfil-stats { grid-template-columns: repeat(2, 1fr); gap: 10px; }
+    .stat-numero { font-size: 24px; }
+    .nivel-progreso-container { padding: 15px; }
+    .nivel-icono { font-size: 20px; }
+    .reto-card { padding: 15px; }
+
+    .admin-container { padding: 20px 15px 60px; }
+    .admin-stats { grid-template-columns: repeat(2, 1fr); gap: 10px; }
+    .admin-seccion { padding: 20px 15px; }
+    .admin-form { flex-direction: column; }
+    .admin-form input { min-width: unset; width: 100%; }
+    .admin-tabla { font-size: 12px; }
+    .admin-tabla th, .admin-tabla td { padding: 8px 6px; }
+    .admin-poster { width: 30px; }
+
+    .ranking-container { padding: 20px 15px 60px; }
+    .ranking-container h1 { font-size: 22px; }
+    .ranking-grid { grid-template-columns: 1fr; gap: 20px; }
+    .cinefilo-semana { flex-direction: column; text-align: center; padding: 20px; gap: 15px; }
+    .cinefilo-semana-icono { font-size: 40px; }
+    .cinefilo-nombre { font-size: 20px; }
+    .ranking-item { padding: 10px 12px; gap: 8px; }
+    .ranking-nombre { font-size: 13px; }
+    .ranking-valor { font-size: 13px; min-width: 60px; }
+
+    .auth-container { padding: 25px 20px; margin: 20px auto; }
+    .auth-bienvenida h2 { font-size: 22px; }
+
+    .notificacion-nivel-box { padding: 30px 20px; margin: 15px; }
+    .notificacion-nivel-icono { font-size: 55px; }
+    .notificacion-nivel-box h2 { font-size: 22px; }
+
+    .toast-reto { bottom: 15px; right: 15px; left: 15px; max-width: unset; }
+
+    .paginacion { gap: 10px; }
+    .paginacion a { padding: 8px 15px; font-size: 13px; }
+
+    .estrellas-input label { font-size: 28px; }
+    .resena-header { gap: 8px; }
+    .resena-fecha { margin-left: 0; width: 100%; }
+}
+
+@media (max-width: 480px) {
+    .grid-peliculas { grid-template-columns: repeat(2, 1fr); }
+    .filtros-extra-grid { grid-template-columns: 1fr; }
+    .hero-botones { flex-direction: column; align-items: flex-start; gap: 8px; }
+    .ranking-nivel { display: none; }
+    .detalle-poster { width: 150px; height: 225px; }
+}
+.nav-logo {
+    padding: 0 !important;
+    background: none !important;
+    transform: none !important;
+    transition: none !important;
+    pointer-events: auto;
+}
+
+.nav-logo:hover {
+    padding: 0 !important;
+    background: none !important;
+    transform: none !important;
+    transition: none !important;
+}
+
+.nav-logo img {
+    transition: none !important;
+    transform: none !important;
 }
