@@ -3,6 +3,6 @@ if (session_status() === PHP_SESSION_NONE) session_start();
 if (isset($_SESSION['usuario_id'])) {
     header('Location: pages/home.php');
 } else {
-    header('Location: pages/login.php');
+    header('Location: pages/presentacion.php');
 }
 exit;
