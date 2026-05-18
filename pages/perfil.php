@@ -9,7 +9,19 @@ require_once '../api/tmdb.php';
 require_once '../includes/niveles.php';
  
 $usuario_id = $_SESSION['usuario_id'];
- 
+
+// Procesar eliminación de cuenta
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['eliminar_cuenta'])) {
+    $pdo->prepare('DELETE FROM historial_visto WHERE usuario_id = ?')->execute([$usuario_id]);
+    $pdo->prepare('DELETE FROM lista_pendientes WHERE usuario_id = ?')->execute([$usuario_id]);
+    $pdo->prepare('DELETE FROM usuario_retos WHERE usuario_id = ?')->execute([$usuario_id]);
+    $pdo->prepare('DELETE FROM valoraciones WHERE usuario_id = ?')->execute([$usuario_id]);
+    $pdo->prepare('DELETE FROM usuarios WHERE id = ?')->execute([$usuario_id]);
+    session_destroy();
+    header('Location: /cinequest/index.php');
+    exit;
+}
+
 $stmt = $pdo->prepare('SELECT * FROM usuarios WHERE id = ?');
 $stmt->execute([$usuario_id]);
 $usuario = $stmt->fetch();
@@ -191,6 +203,17 @@ include '../includes/header.php';
         <?php endif; ?>
     </div>
  
+    <div class="perfil-seccion">
+        <h2>Gestión de cuenta</h2>
+        <div style="background:#ff000011; border:1px solid #ff000055; border-radius:10px; padding:20px;">
+            <form method="POST" onsubmit="return confirm('¿Seguro que quieres eliminar tu cuenta? Esta acción es irreversible.')">
+                <button type="submit" name="eliminar_cuenta" class="btn-eliminar-cuenta">🗑️ Eliminar mi cuenta</button>
+            </form>
+            <br>
+            <p style="color:#aaa; margin-bottom:15px; font-size:14px;">⚠️Una vez elimines tu cuenta se borrarán todos tus datos, historial, retos y valoraciones. Esta acción no se puede deshacer.⚠️</p>
+        </div>
+    </div>
+
 </main>
  
 <script>

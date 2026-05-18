@@ -116,6 +116,8 @@ $pelicula = obtener_pelicula($tmdb_id);
 if (!$pelicula || isset($pelicula['status_code'])) { header('Location: peliculas.php'); exit; }
  
 $trailer_key = obtener_trailer($tmdb_id);
+$similares_resultado = tmdb_get('/movie/' . $tmdb_id . '/similar');
+$similares = array_slice(array_filter($similares_resultado['results'] ?? [], fn($p) => !empty($p['poster_path'])), 0, 8);
 $mensaje = '';
 $mensaje_valoracion = '';
  
@@ -386,6 +388,24 @@ include '../includes/header.php';
     <?php endif; ?>
 </main>
  
+<?php if (!empty($similares)): ?>
+<div class="similares-seccion">
+    <h2>🎬 Películas similares</h2>
+    <div class="carrusel">
+        <?php foreach ($similares as $sim): ?>
+            <a href="pelicula.php?id=<?= $sim['id'] ?>" class="carrusel-item">
+                <img src="<?= poster_url($sim['poster_path']) ?>"
+                     alt="<?= htmlspecialchars($sim['title']) ?>">
+                <div class="carrusel-info">
+                    <p><?= htmlspecialchars($sim['title']) ?></p>
+                    <span>⭐ <?= number_format($sim['vote_average'], 1) ?></span>
+                </div>
+            </a>
+        <?php endforeach; ?>
+    </div>
+</div>
+<?php endif; ?>
+
 <?php if (!empty($_SESSION['retos_completados'])): ?>
 <div id="toast-reto" class="toast-reto">
     🏆 ¡Reto completado! Revisa tu perfil para ver tu progreso.

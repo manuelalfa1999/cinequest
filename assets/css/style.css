@@ -1406,22 +1406,34 @@ nav a.nav-activo { background: #4fc3f7; color: #0f0f0f !important; font-weight: 
     .ranking-nivel { display: none; }
     .detalle-poster { width: 150px; height: 225px; }
 }
-.nav-logo {
-    padding: 0 !important;
-    background: none !important;
-    transform: none !important;
-    transition: none !important;
-    pointer-events: auto;
+/* ===========================
+   ELIMINAR CUENTA
+=========================== */
+.btn-eliminar-cuenta {
+    padding: 12px 25px;
+    background: #ff000022;
+    border: 1px solid #ff0000;
+    color: #ff6b6b;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background 0.2s;
 }
 
-.nav-logo:hover {
-    padding: 0 !important;
-    background: none !important;
-    transform: none !important;
-    transition: none !important;
+.btn-eliminar-cuenta:hover { background: #ff000044; }
+
+/* ===========================
+   PELÍCULAS SIMILARES
+=========================== */
+.similares-seccion {
+    margin-top: 50px;
+    padding-top: 30px;
+    border-top: 1px solid #333;
 }
 
-.nav-logo img {
-    transition: none !important;
-    transform: none !important;
+.similares-seccion h2 {
+    color: #4fc3f7;
+    margin-bottom: 20px;
+    font-size: 20px;
 }

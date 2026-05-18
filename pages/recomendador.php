@@ -25,18 +25,16 @@ $mapa_compania = [
 ];
 
 $mapa_tiempo = [
-    '30min'  => 35,
-    '1h'     => 65,
-    '1h30'   => 95,
-    '2h'     => 125,
-    'mas2h'  => 999,
+    '1h30' => 95,
+    '2h'   => 125,
+    'sofa' => 180,
+    'cafe' => 210,
 ];
 
+// momento afecta al criterio de ordenación
 $mapa_momento = [
-    'manana'    => [35, 10751, 16],
-    'tarde'     => [28, 12, 35],
-    'noche'     => [53, 27, 9648],
-    'madrugada' => [27, 878, 53],
+    'dia'   => 'popularity.desc',
+    'noche' => 'vote_average.desc',
 ];
 
 $mapa_decada = [
@@ -57,6 +55,14 @@ $mapa_idioma = [
     'ko' => 'Coreano',
 ];
 
+$mapa_formato = [
+    'accion_vivo'  => [28, 12, 53],
+    'animacion'    => [16],
+    'hechos_reales'=> [99, 36, 18],
+    'comic'        => [28, 878, 14],
+    'autor'        => [18, 36, 10749],
+];
+
 $peliculas = [];
 $buscado = false;
 
@@ -65,7 +71,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $animo          = $_POST['animo'] ?? '';
     $compania       = $_POST['compania'] ?? '';
     $tiempo         = $_POST['tiempo'] ?? '';
-    $concentracion  = $_POST['concentracion'] ?? '';
+    $formato        = $_POST['formato'] ?? '';
     $momento        = $_POST['momento'] ?? '';
     $decada         = $_POST['decada'] ?? '';
     $idioma         = $_POST['idioma'] ?? '';
@@ -73,31 +79,47 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     $generos_animo    = $mapa_animo[$animo] ?? [];
     $generos_compania = $mapa_compania[$compania] ?? [];
-    $generos_momento  = $mapa_momento[$momento] ?? [];
 
     $generos_comunes = array_intersect($generos_animo, $generos_compania);
     $generos_finales = !empty($generos_comunes) ? $generos_comunes : $generos_animo;
 
-    if (!empty($generos_momento)) {
-        $mix = array_intersect($generos_finales, $generos_momento);
-        if (!empty($mix)) $generos_finales = $mix;
-    }
-
-    $genero_id = $generos_finales[array_key_first($generos_finales)] ?? 28;
+    $genero_id    = $generos_finales[array_key_first($generos_finales)] ?? 28;
     $duracion_max = $mapa_tiempo[$tiempo] ?? null;
 
-    $params = ['with_genres' => $genero_id, 'sort_by' => 'popularity.desc'];
+    // Momento afecta al sort
+    $sort = $mapa_momento[$momento] ?? 'popularity.desc';
+    $params = ['with_genres' => $genero_id, 'sort_by' => $sort];
 
-    if ($duracion_max && $duracion_max !== 999) {
+    // Noche = películas más valoradas
+    if ($momento === 'noche') {
+        $params['vote_average.gte'] = 7;
+        $params['vote_count.gte'] = 100;
+    }
+
+    // Duración
+    $duracion_max = $mapa_tiempo[$tiempo] ?? null;
+    if ($duracion_max) {
         $params['with_runtime.lte'] = $duracion_max;
     }
 
-    if ($concentracion === 'compleja' || $concentracion === 'giros') {
+    // Formato añade restricción al tipo de película manteniendo el género del ánimo
+    if ($formato === 'animacion') {
+        // Ánimo + animación: añadir género animación a los géneros base
+        $params['with_genres'] = $genero_id . ',16';
+    } elseif ($formato === 'accion_vivo') {
+        // Excluir animación
+        $params['without_genres'] = '16';
+    } elseif ($formato === 'hechos_reales') {
+        // Ánimo + hechos reales: añadir documental o biopic
+        $params['with_genres'] = $genero_id . ',99';
+    } elseif ($formato === 'comic') {
+        // Ánimo + cómic: añadir ciencia ficción/fantasía
+        $params['with_genres'] = $genero_id . ',878';
+    } elseif ($formato === 'autor') {
+        // Cine de autor: mantener géneros pero exigir alta calidad
         $params['sort_by'] = 'vote_average.desc';
-        $params['vote_average.gte'] = 7;
-        $params['vote_count.gte'] = $concentracion === 'compleja' ? 200 : 100;
-    } elseif ($concentracion === 'normal') {
-        $params['sort_by'] = 'vote_average.desc';
+        $params['vote_average.gte'] = max($params['vote_average.gte'] ?? 0, 7);
+        $params['vote_count.gte'] = max($params['vote_count.gte'] ?? 0, 200);
     }
 
     if ($decada && isset($mapa_decada[$decada])) {
@@ -114,9 +136,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $params['vote_count.gte'] = 50;
     }
 
-    $resultado = tmdb_get('/discover/movie', $params);
-    if (!$resultado) $resultado = obtener_peliculas_por_genero($genero_id, $duracion_max !== 999 ? $duracion_max : null);
-    $peliculas = $resultado['results'] ?? [];
+    $peliculas_raw = [];
+    for ($p = 1; $p <= 2; $p++) {
+        $params['page'] = $p;
+        $res = tmdb_get('/discover/movie', $params);
+        if ($res) $peliculas_raw = array_merge($peliculas_raw, $res['results'] ?? []);
+    }
+    if (empty($peliculas_raw)) {
+        $fallback = obtener_peliculas_por_genero($genero_id, $duracion_max !== 999 ? $duracion_max : null);
+        $peliculas_raw = $fallback['results'] ?? [];
+    }
+
+    $peliculas = $peliculas_raw;
 
     $_SESSION['ultimo_contexto'] = [
         'animo'    => $animo,
@@ -196,69 +227,61 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         <div class="campo">
             <label>⏱️ ¿Cuánto tiempo tienes?</label>
             <div class="opciones-grid">
-                <label class="opcion <?= ($_POST['tiempo'] ?? '') === '30min' ? 'seleccionada' : '' ?>">
-                    <input type="radio" name="tiempo" value="30min" required>
-                    ⚡ 30 minutos
-                </label>
-                <label class="opcion <?= ($_POST['tiempo'] ?? '') === '1h' ? 'seleccionada' : '' ?>">
-                    <input type="radio" name="tiempo" value="1h">
-                    🕐 Menos de 1 hora
-                </label>
                 <label class="opcion <?= ($_POST['tiempo'] ?? '') === '1h30' ? 'seleccionada' : '' ?>">
-                    <input type="radio" name="tiempo" value="1h30">
-                    🕑 1 a 1.5 horas
+                    <input type="radio" name="tiempo" value="1h30" required>
+                    🕐 Hasta 1h 30min
                 </label>
                 <label class="opcion <?= ($_POST['tiempo'] ?? '') === '2h' ? 'seleccionada' : '' ?>">
                     <input type="radio" name="tiempo" value="2h">
-                    🕒 1.5 a 2 horas
+                    🕒 Hasta 2 horas
                 </label>
-                <label class="opcion <?= ($_POST['tiempo'] ?? '') === 'mas2h' ? 'seleccionada' : '' ?>">
-                    <input type="radio" name="tiempo" value="mas2h">
-                    🎬 Más de 2 horas
+                <label class="opcion <?= ($_POST['tiempo'] ?? '') === 'sofa' ? 'seleccionada' : '' ?>">
+                    <input type="radio" name="tiempo" value="sofa">
+                    😴 Prepara el sofá (3h+)
                 </label>
-            </div>
-        </div>
-
-        <div class="campo">
-            <label>💡 ¿Qué nivel de concentración tienes?</label>
-            <div class="opciones-grid">
-                <label class="opcion <?= ($_POST['concentracion'] ?? '') === 'facil' ? 'seleccionada' : '' ?>">
-                    <input type="radio" name="concentracion" value="facil" required>
-                    😴 Fácil de seguir
-                </label>
-                <label class="opcion <?= ($_POST['concentracion'] ?? '') === 'normal' ? 'seleccionada' : '' ?>">
-                    <input type="radio" name="concentracion" value="normal">
-                    🧠 Normal
-                </label>
-                <label class="opcion <?= ($_POST['concentracion'] ?? '') === 'compleja' ? 'seleccionada' : '' ?>">
-                    <input type="radio" name="concentracion" value="compleja">
-                    🤯 Compleja y profunda
-                </label>
-                <label class="opcion <?= ($_POST['concentracion'] ?? '') === 'giros' ? 'seleccionada' : '' ?>">
-                    <input type="radio" name="concentracion" value="giros">
-                    🌀 Con giros de guión
+                <label class="opcion <?= ($_POST['tiempo'] ?? '') === 'cafe' ? 'seleccionada' : '' ?>">
+                    <input type="radio" name="tiempo" value="cafe">
+                    ☕ Mejor coge café (3h 30min+)
                 </label>
             </div>
         </div>
 
         <div class="campo">
-            <label>⏳ ¿En qué momento del día estás?</label>
+            <label>🎞️ ¿Qué formato prefieres?</label>
             <div class="opciones-grid">
-                <label class="opcion <?= ($_POST['momento'] ?? '') === 'manana' ? 'seleccionada' : '' ?>">
-                    <input type="radio" name="momento" value="manana" required>
-                    🌅 Mañana
+                <label class="opcion <?= ($_POST['formato'] ?? '') === 'accion_vivo' ? 'seleccionada' : '' ?>">
+                    <input type="radio" name="formato" value="accion_vivo">
+                    🎬 Acción en vivo
                 </label>
-                <label class="opcion <?= ($_POST['momento'] ?? '') === 'tarde' ? 'seleccionada' : '' ?>">
-                    <input type="radio" name="momento" value="tarde">
-                    ☀️ Tarde
+                <label class="opcion <?= ($_POST['formato'] ?? '') === 'animacion' ? 'seleccionada' : '' ?>">
+                    <input type="radio" name="formato" value="animacion">
+                    🖼️ Animación
+                </label>
+                <label class="opcion <?= ($_POST['formato'] ?? '') === 'hechos_reales' ? 'seleccionada' : '' ?>">
+                    <input type="radio" name="formato" value="hechos_reales">
+                    📺 Basada en hechos reales
+                </label>
+                <label class="opcion <?= ($_POST['formato'] ?? '') === 'comic' ? 'seleccionada' : '' ?>">
+                    <input type="radio" name="formato" value="comic">
+                    📚 Basada en cómic
+                </label>
+                <label class="opcion <?= ($_POST['formato'] ?? '') === 'autor' ? 'seleccionada' : '' ?>">
+                    <input type="radio" name="formato" value="autor">
+                    🌍 Cine de autor
+                </label>
+            </div>
+        </div>
+
+        <div class="campo">
+            <label>🌓 ¿Es de día o de noche?</label>
+            <div class="opciones-grid">
+                <label class="opcion <?= ($_POST['momento'] ?? '') === 'dia' ? 'seleccionada' : '' ?>">
+                    <input type="radio" name="momento" value="dia">
+                    ☀️ De día
                 </label>
                 <label class="opcion <?= ($_POST['momento'] ?? '') === 'noche' ? 'seleccionada' : '' ?>">
                     <input type="radio" name="momento" value="noche">
-                    🌙 Noche
-                </label>
-                <label class="opcion <?= ($_POST['momento'] ?? '') === 'madrugada' ? 'seleccionada' : '' ?>">
-                    <input type="radio" name="momento" value="madrugada">
-                    🌃 Madrugada
+                    🌙 De noche
                 </label>
             </div>
         </div>
