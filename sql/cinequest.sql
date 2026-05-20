@@ -6,20 +6,20 @@
 -- Ejecutar en phpMyAdmin o MySQL CLI:
 -- mysql -u root -p < setup.sql
 -- ============================================================
- 
+
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 SET FOREIGN_KEY_CHECKS = 0;
 START TRANSACTION;
 SET time_zone = "+00:00";
 SET NAMES utf8mb4;
- 
+
 -- Crear base de datos si no existe
 CREATE DATABASE IF NOT EXISTS `cinequest`
     CHARACTER SET utf8mb4
     COLLATE utf8mb4_unicode_ci;
- 
+
 USE `cinequest`;
- 
+
 CREATE TABLE `historial_visto` (
   `id` int(11) NOT NULL,
   `usuario_id` int(11) NOT NULL,
@@ -30,14 +30,14 @@ CREATE TABLE `historial_visto` (
   `genero_principal` int(11) DEFAULT NULL,
   `duracion` int(11) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
- 
+
 CREATE TABLE `lista_pendientes` (
   `id` int(11) NOT NULL,
   `usuario_id` int(11) NOT NULL,
   `pelicula_id` int(11) NOT NULL,
   `fecha` datetime DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
- 
+
 CREATE TABLE `logros` (
   `id` int(11) NOT NULL,
   `titulo` varchar(150) NOT NULL,
@@ -45,7 +45,7 @@ CREATE TABLE `logros` (
   `icono` varchar(255) DEFAULT NULL,
   `condicion` varchar(255) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
- 
+
 CREATE TABLE `peliculas` (
   `id` int(11) NOT NULL,
   `tmdb_id` int(11) NOT NULL,
@@ -58,7 +58,7 @@ CREATE TABLE `peliculas` (
   `vote_average` float DEFAULT 0,
   `vote_count` int(11) DEFAULT 0
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
- 
+
 CREATE TABLE `retos` (
   `id` int(11) NOT NULL,
   `titulo` varchar(150) NOT NULL,
@@ -69,7 +69,7 @@ CREATE TABLE `retos` (
   `categoria` enum('bronce','plata','oro','legendario','platino') DEFAULT 'bronce',
   `nivel_requerido` int(11) DEFAULT 1
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
- 
+
 CREATE TABLE `usuarios` (
   `id` int(11) NOT NULL,
   `nombre` varchar(100) NOT NULL,
@@ -83,14 +83,14 @@ CREATE TABLE `usuarios` (
   `cinefilo_semana` int(11) DEFAULT 0,
   `cinefilo_semana_fecha` date DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
- 
+
 CREATE TABLE `usuario_logros` (
   `id` int(11) NOT NULL,
   `usuario_id` int(11) NOT NULL,
   `logro_id` int(11) NOT NULL,
   `fecha_obtenido` datetime DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
- 
+
 CREATE TABLE `usuario_retos` (
   `id` int(11) NOT NULL,
   `usuario_id` int(11) NOT NULL,
@@ -99,7 +99,7 @@ CREATE TABLE `usuario_retos` (
   `completado` tinyint(1) DEFAULT 0,
   `fecha_completado` datetime DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
- 
+
 CREATE TABLE `valoraciones` (
   `id` int(11) NOT NULL,
   `usuario_id` int(11) NOT NULL,
@@ -108,89 +108,89 @@ CREATE TABLE `valoraciones` (
   `comentario` text DEFAULT NULL,
   `fecha` datetime DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
- 
+
 ALTER TABLE `historial_visto`
   ADD PRIMARY KEY (`id`),
   ADD KEY `usuario_id` (`usuario_id`),
   ADD KEY `pelicula_id` (`pelicula_id`);
- 
+
 ALTER TABLE `lista_pendientes`
   ADD PRIMARY KEY (`id`),
   ADD UNIQUE KEY `unico` (`usuario_id`,`pelicula_id`);
- 
+
 ALTER TABLE `logros`
   ADD PRIMARY KEY (`id`);
- 
+
 ALTER TABLE `peliculas`
   ADD PRIMARY KEY (`id`),
   ADD UNIQUE KEY `tmdb_id` (`tmdb_id`);
- 
+
 ALTER TABLE `retos`
   ADD PRIMARY KEY (`id`);
- 
+
 ALTER TABLE `usuarios`
   ADD PRIMARY KEY (`id`),
   ADD UNIQUE KEY `email` (`email`);
- 
+
 ALTER TABLE `usuario_logros`
   ADD PRIMARY KEY (`id`),
   ADD KEY `usuario_id` (`usuario_id`),
   ADD KEY `logro_id` (`logro_id`);
- 
+
 ALTER TABLE `usuario_retos`
   ADD PRIMARY KEY (`id`),
   ADD KEY `usuario_id` (`usuario_id`),
   ADD KEY `reto_id` (`reto_id`);
- 
+
 ALTER TABLE `valoraciones`
   ADD PRIMARY KEY (`id`),
   ADD KEY `usuario_id` (`usuario_id`),
   ADD KEY `pelicula_id` (`pelicula_id`);
- 
+
 ALTER TABLE `historial_visto`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=38;
- 
+
 ALTER TABLE `lista_pendientes`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
- 
+
 ALTER TABLE `logros`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
- 
+
 ALTER TABLE `peliculas`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=730;
- 
+
 ALTER TABLE `retos`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=22;
- 
+
 ALTER TABLE `usuarios`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
- 
+
 ALTER TABLE `usuario_logros`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
- 
+
 ALTER TABLE `usuario_retos`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=61;
- 
+
 ALTER TABLE `valoraciones`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
- 
+
 ALTER TABLE `historial_visto`
   ADD CONSTRAINT `historial_visto_ibfk_1` FOREIGN KEY (`usuario_id`) REFERENCES `usuarios` (`id`) ON DELETE CASCADE;
- 
+
 ALTER TABLE `lista_pendientes`
   ADD CONSTRAINT `lista_pendientes_ibfk_1` FOREIGN KEY (`usuario_id`) REFERENCES `usuarios` (`id`) ON DELETE CASCADE;
- 
+
 ALTER TABLE `usuario_logros`
   ADD CONSTRAINT `usuario_logros_ibfk_1` FOREIGN KEY (`usuario_id`) REFERENCES `usuarios` (`id`) ON DELETE CASCADE,
   ADD CONSTRAINT `usuario_logros_ibfk_2` FOREIGN KEY (`logro_id`) REFERENCES `logros` (`id`) ON DELETE CASCADE;
- 
+
 ALTER TABLE `usuario_retos`
   ADD CONSTRAINT `usuario_retos_ibfk_1` FOREIGN KEY (`usuario_id`) REFERENCES `usuarios` (`id`) ON DELETE CASCADE,
   ADD CONSTRAINT `usuario_retos_ibfk_2` FOREIGN KEY (`reto_id`) REFERENCES `retos` (`id`) ON DELETE CASCADE;
- 
+
 ALTER TABLE `valoraciones`
   ADD CONSTRAINT `valoraciones_ibfk_1` FOREIGN KEY (`usuario_id`) REFERENCES `usuarios` (`id`) ON DELETE CASCADE;
- 
+
 -- Datos base: Retos del sistema
 INSERT INTO `retos` (`id`, `titulo`, `descripcion`, `tipo`, `objetivo`, `puntos_xp`, `categoria`, `nivel_requerido`) VALUES
 (6, 'Primer vistazo', 'Ve tu primera película en CineQuest', 'peliculas_vistas', 1, 50, 'bronce', 1),
@@ -209,17 +209,17 @@ INSERT INTO `retos` (`id`, `titulo`, `descripcion`, `tipo`, `objetivo`, `puntos_
 (19, 'Omnívoro cinematográfico', 'Ve películas de 8 géneros distintos', 'generos_distintos', 8, 600, 'legendario', 4),
 (20, 'El gran crítico', 'Valora 50 películas', 'valoraciones', 50, 700, 'legendario', 4),
 (21, 'Maestro Cinéfilo 🏆', 'Has alcanzado el nivel máximo. Eres una leyenda del cine.', 'nivel_maximo', 5, 1000, 'platino', 5);
- 
+
 -- Usuario administrador por defecto
--- Email: admin@cinequest.com | Contraseña: Admin123!
+-- Email: admin@cinequest.com | Contraseña: password
 INSERT INTO `usuarios` (`nombre`, `email`, `password_hash`, `rol`, `nivel`, `puntos_xp`) VALUES
 ('Admin', 'admin@cinequest.com', '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', 'admin', 1, 0);
- 
+
 SET FOREIGN_KEY_CHECKS = 1;
 COMMIT;
- 
+
 -- ============================================================
 -- Instalación completada
 -- Accede a: http://localhost/cinequest
--- Admin: admin@cinequest.com / Admin123!
+-- Admin: admin@cinequest.com / password
 -- ============================================================
