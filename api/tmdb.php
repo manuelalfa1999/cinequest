@@ -6,16 +6,13 @@ function tmdb_get($endpoint, $params = []) {
     $params['language'] = 'es-ES';
     $url = TMDB_BASE_URL . $endpoint . '?' . http_build_query($params);
 
-    $ch = curl_init();
-    curl_setopt($ch, CURLOPT_URL, $url);
-    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-    curl_setopt($ch, CURLOPT_TIMEOUT, 5);
-    curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 3);
-    $response = curl_exec($ch);
-    $error = curl_error($ch);
-    curl_close($ch);
+    $response = @file_get_contents($url);
+    if (!$response) return null;
 
-    if ($error || !$response) return null;
+    // Descomprimir gzip si es necesario
+    if (substr($response, 0, 2) === "\x1f\x8b") {
+        $response = gzdecode($response);
+    }
 
     $datos = json_decode($response, true);
     if (!$datos || isset($datos['status_code'])) return null;
